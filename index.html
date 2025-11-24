@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PKBM Celah Cahaya - Belajar Online</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        /* CSS Kustom */
+        :root {
+            --primary-color: #007bff; /* Biru khas PKBM */
+        }
+        body { background-color: #f8f9fa; }
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 0;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .card-materi {
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            border-left: 5px solid var(--primary-color);
+            min-height: 150px;
+        }
+        .card-materi:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        #login-container {
+            max-width: 450px;
+            margin: 100px auto;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            background-color: white;
+        }
+        .modal-body .tab-content {
+            height: 85vh; /* Menjaga iframe tetap terlihat baik di modal besar */
+        }
+        .modal-body iframe {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-container" class="container" style="display: block;">
+        <h2 class="text-center mb-4 text-primary"><i class="fas fa-user-graduate me-2"></i> PKBM Celah Cahaya</h2>
+        <h4 class="text-center mb-4">Portal Belajar Online</h4>
+        <form id="login-form">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control form-control-lg" id="username" required>
+            </div>
+            <div class="mb-4">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control form-control-lg" id="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg w-100" id="login-btn">
+                <span id="login-spinner" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" style="display:none;"></span>
+                MASUK
+            </button>
+            <div id="login-alert" class="alert mt-3 text-center" style="display:none;"></div>
+        </form>
+    </div>
+
+    <div id="dashboard-container" class="container-fluid" style="display: none;">
+        <header class="header">
+            <div class="container d-flex justify-content-between align-items-center">
+                <h3>PKBM Celah Cahaya - Kelas <span id="user-kelas" class="badge bg-light text-primary"></span></h3>
+                <div class="d-flex align-items-center">
+                    <span id="user-display" class="me-3 fw-bold"></span>
+                    <button class="btn btn-sm btn-light" id="logout-btn"><i class="fas fa-sign-out-alt me-1"></i> Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <h4 class="mb-4 text-secondary">Akses Materi Pembelajaran</h4>
+            
+            <div id="materi-list" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                </div>
+
+            <hr class="my-5">
+
+            <h4 class="mb-4"><i class="fas fa-chart-bar me-2"></i>Rekap Nilai (Contoh)</h4>
+            <div class="alert alert-info" role="alert">
+                **Catatan:** Untuk fungsionalitas rekap nilai otomatis, Anda perlu menambahkan Apps Script untuk mengambil data hasil ulangan dari Google Sheets.
+            </div>
+            <table class="table table-striped table-hover">
+                <thead class="table-primary">
+                    <tr>
+                        <th>#</th>
+                        <th>Materi Topik</th>
+                        <th>Status Tugas</th>
+                        <th>Status Ulangan</th>
+                        <th>Nilai Akhir</th>
+                    </tr>
+                </thead>
+                <tbody id="nilai-rekap">
+                    <tr><td>1</td><td>Pengantar IPS</td><td><span class="badge bg-success">Selesai</span></td><td><span class="badge bg-warning text-dark">Menunggu</span></td><td>**-**</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal fade" id="contentModal" tabindex="-1" aria-labelledby="contentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-fullscreen-sm-down modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="contentModalLabel"></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <ul class="nav nav-tabs" id="contentTabs" role="tablist">
+                        <li class="nav-item" role="presentation"><button class="nav-link active" id="materi-tab" data-bs-toggle="tab" data-bs-target="#materi-pane" type="button" role="tab"><i class="fas fa-book-open me-1"></i> Materi Bacaan</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link" id="tugas-tab" data-bs-toggle="tab" data-bs-target="#tugas-pane" type="button" role="tab"><i class="fas fa-clipboard-list me-1"></i> Tugas</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link" id="ulangan-tab" data-bs-toggle="tab" data-bs-target="#ulangan-pane" type="button" role="tab"><i class="fas fa-pencil-alt me-1"></i> Ulangan</button></li>
+                    </ul>
+                    <div class="tab-content h-100" id="contentTabsContent">
+                        <div class="tab-pane fade show active h-100" id="materi-pane" role="tabpanel" tabindex="0">
+                            <iframe id="materi-iframe" src="" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                        <div class="tab-pane fade h-100" id="tugas-pane" role="tabpanel" tabindex="0">
+                            <div class="p-3">
+                                <a id="tugas-link" href="#" target="_blank" class="btn btn-warning mb-3"><i class="fas fa-external-link-alt me-1"></i> Buka Formulir Tugas (Jendela Baru)</a>
+                            </div>
+                            <iframe id="tugas-iframe" src="" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                        <div class="tab-pane fade h-100" id="ulangan-pane" role="tabpanel" tabindex="0">
+                            <div class="p-3">
+                                <a id="ulangan-link" href="#" target="_blank" class="btn btn-danger mb-3"><i class="fas fa-external-link-alt me-1"></i> Buka Formulir Ulangan (Jendela Baru)</a>
+                            </div>
+                            <iframe id="ulangan-iframe" src="" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        /** JavaScript Logic **/
+
+        // PASTE WEB APP URL ANDA DI SINI
+        const API_ENDPOINT = 'PASTE_WEB_APP_URL_ANDA_DI_SINI'; 
+        
+        // ==============================================================================
+        // DATA MATERI PER KELAS
+        // Ganti link placeholder dengan link sebenarnya (Lihat Panduan 3)
+        // ==============================================================================
+        const MATERI_DATA = {
+            // -------------- PAKET B --------------
+            "Paket B Kelas 7": [
+                {
+                    title: "Materi 1: Pengantar Kewarganegaraan",
+                    materi_link: "https://drive.google.com/file/d/ID_FILE_DRIVE_ANDA_B7_M1/preview", 
+                    tugas_link: "https://docs.google.com/forms/d/ID_FORM_TUGAS_B7_M1/viewform?embedded=true",
+                    ulangan_link: "https://docs.google.com/forms/d/ID_FORM_ULANGAN_B7_M1/viewform?embedded=true"
+                },
+                // Tambahkan topik materi Paket B Kelas 7 lainnya di sini
+            ],
+            "Paket B Kelas 8": [
+                {
+                    title: "Materi 1: Ilmu Pengetahuan Alam (IPA)",
+                    materi_link: "https://drive.google.com/file/d/ID_FILE_DRIVE_ANDA_B8_M1/preview", 
+                    tugas_link: "https://docs.google.com/forms/d/ID_FORM_TUGAS_B8_M1/viewform?embedded=true",
+                    ulangan_link: "https://docs.google.com/forms/d/ID_FORM_ULANGAN_B8_M1/viewform?embedded=true"
+                },
+                // Tambahkan topik materi Paket B Kelas 8 lainnya di sini
+            ],
+            "Paket B Kelas 9": [
+                {
+                    title: "Materi 1: Bahasa Inggris Dasar",
+                    materi_link: "https://drive.google.com/file/d/ID_FILE_DRIVE_ANDA_B9_M1/preview", 
+                    tugas_link: "https://docs.google.com/forms/d/ID_FORM_TUGAS_B9_M1/viewform?embedded=true",
+                    ulangan_link: "https://docs.google.com/forms/d/ID_FORM_ULANGAN_B9_M1/viewform?embedded=true"
+                },
+            ],
+            // -------------- PAKET C --------------
+            "Paket C Kelas 10": [
+                {
+                    title: "Materi 1: Pengantar Akuntansi",
+                    materi_link: "https://drive.google.com/file/d/ID_FILE_DRIVE_ANDA_C10_M1/preview", 
+                    tugas_link: "https://docs.google.com/forms/d/ID_FORM_TUGAS_C10_M1/viewform?embedded=true",
+                    ulangan_link: "https://docs.google.com/forms/d/ID_FORM_ULANGAN_C10_M1/viewform?embedded=true"
+                },
+            ],
+            "Paket C Kelas 11": [
+                {
+                    title: "Materi 1: Ekonomi Bisnis & Manajemen",
+                    materi_link: "https://drive.google.com/file/d/ID_FILE_DRIVE_ANDA_C11_M1/preview", 
+                    tugas_link: "https://docs.google.com/forms/d/ID_FORM_TUGAS_C11_M1/viewform?embedded=true",
+                    ulangan_link: "https://docs.google.com/forms/d/ID_FORM_ULANGAN_C11_M1/viewform?embedded=true"
+                },
+            ],
+            "Paket C Kelas 12": [
+                {
+                    title: "Materi 1: Analisis Data & Statistika",
+                    materi_link: "https://drive.google.com/file/d/ID_FILE_DRIVE_ANDA_C12_M1/preview", 
+                    tugas_link: "https://docs.google.com/forms/d/ID_FORM_TUGAS_C12_M1/viewform?embedded=true",
+                    ulangan_link: "https://docs.google.com/forms/d/ID_FORM_ULANGAN_C12_M1/viewform?embedded=true"
+                },
+            ]
+        };
+
+        // DOM Elements
+        const loginForm = document.getElementById('login-form');
+        const loginBtn = document.getElementById('login-btn');
+        const loginSpinner = document.getElementById('login-spinner');
+        const loginAlert = document.getElementById('login-alert');
+        const loginContainer = document.getElementById('login-container');
+        const dashboardContainer = document.getElementById('dashboard-container');
+        const userKelasEl = document.getElementById('user-kelas');
+        const userDisplayEl = document.getElementById('user-display');
+        const materiListEl = document.getElementById('materi-list');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        // Fungsi untuk menampilkan dashboard setelah login
+        function showDashboard(username, kelas) {
+            userKelasEl.textContent = kelas;
+            userDisplayEl.textContent = `Hai, ${username}!`;
+            loginContainer.style.display = 'none';
+            dashboardContainer.style.display = 'block';
+            generateMateriList(kelas);
+            
+            // Simpan status login di Session Storage agar tidak perlu login ulang saat refresh
+            sessionStorage.setItem('loggedIn', 'true');
+            sessionStorage.setItem('username', username);
+            sessionStorage.setItem('kelas', kelas);
+        }
+
+        // Fungsi untuk membuat daftar card materi
+        function generateMateriList(kelas) {
+            materiListEl.innerHTML = '';
+            const materiArr = MATERI_DATA[kelas] || [];
+
+            materiArr.forEach((m, index) => {
+                const col = document.createElement('div');
+                col.className = 'col';
+                // Gunakan fungsi global untuk memanggil modal
+                col.innerHTML = `
+                    <div class="card card-materi shadow-sm h-100" onclick="openContentModal('${m.title}', '${m.materi_link}', '${m.tugas_link}', '${m.ulangan_link}')">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary"><i class="fas fa-folder me-2"></i>${m.title}</h5>
+                            <p class="card-text text-muted small">Materi | Tugas | Ulangan</p>
+                        </div>
+                        <div class="card-footer bg-light text-end">
+                            <i class="fas fa-chevron-right text-secondary"></i>
+                        </div>
+                    </div>
+                `;
+                materiListEl.appendChild(col);
+            });
+        }
+
+        // Fungsi global untuk membuka Modal Konten
+        window.openContentModal = function(title, materiLink, tugasLink, ulanganLink) {
+            document.getElementById('contentModalLabel').textContent = title;
+            
+            // Set sumber iframe dan link eksternal
+            document.getElementById('materi-iframe').src = materiLink;
+            document.getElementById('tugas-iframe').src = tugasLink;
+            document.getElementById('ulangan-iframe').src = ulanganLink;
+            
+            // Set link tombol eksternal (hapus ?embedded=true)
+            document.getElementById('tugas-link').href = tugasLink.replace('?embedded=true', '');
+            document.getElementById('ulangan-link').href = ulanganLink.replace('?embedded=true', '');
+
+            // Tampilkan modal dan pastikan tab Materi aktif
+            const modal = new bootstrap.Modal(document.getElementById('contentModal'));
+            modal.show();
+            const materiTab = new bootstrap.Tab(document.getElementById('materi-tab'));
+            materiTab.show();
+        }
+
+        // Logika Login
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Tampilkan loading state
+            loginBtn.disabled = true;
+            loginSpinner.style.display = 'inline-block';
+            loginAlert.style.display = 'none';
+
+            try {
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'POST',
+                    contentType: 'application/json',
+                    body: JSON.stringify({ username, password })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    loginAlert.className = 'alert alert-success';
+                    loginAlert.textContent = result.message;
+                    setTimeout(() => { showDashboard(result.user, result.kelas); }, 500); // Tunda sebentar untuk efek visual
+                } else {
+                    loginAlert.className = 'alert alert-danger';
+                    loginAlert.textContent = result.message;
+                    loginAlert.style.display = 'block';
+                }
+                
+            } catch (error) {
+                loginAlert.className = 'alert alert-danger';
+                loginAlert.textContent = 'Terjadi kesalahan koneksi atau konfigurasi API.';
+                loginAlert.style.display = 'block';
+            } finally {
+                loginBtn.disabled = false;
+                loginSpinner.style.display = 'none';
+            }
+        });
+
+        // Logika Logout
+        logoutBtn.addEventListener('click', () => {
+            sessionStorage.clear();
+            dashboardContainer.style.display = 'none';
+            loginContainer.style.display = 'block';
+            loginAlert.style.display = 'none';
+            loginForm.reset(); 
+        });
+
+        // Cek Status Login Saat Memuat Halaman
+        window.onload = () => {
+            if (sessionStorage.getItem('loggedIn') === 'true') {
+                const user = sessionStorage.getItem('username');
+                const kelas = sessionStorage.getItem('kelas');
+                showDashboard(user, kelas);
+            }
+        };
+    </script>
+</body>
+</html>
