@@ -8,67 +8,187 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <style>
-        :root { --primary-color: #007bff; }
-        body { background-color: #f8f9fa; }
-        .header { background-color: var(--primary-color); color: white; padding: 15px 0; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        #login-container { max-width: 450px; margin: 100px auto; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); border-radius: 10px; background-color: white; }
-        .modal-body .tab-content { height: 85vh; }
-        .modal-body iframe { width: 100%; height: 100%; }
-        .disabled-link { cursor: not-allowed; opacity: 0.6; pointer-events: none; }
-        .table-mapel tbody tr { cursor: pointer; }
-        .table-mapel tbody tr:hover { background-color: #e9ecef; }
-        .status-indicator { font-size: 1.1em; }
+        /* Modernisasi Warna dan Tema */
+        :root { 
+            --primary-color: #007bff; /* Biru Primer */
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --info-color: #17a2b8;
+            --bg-light: #f4f7f6; /* Latar belakang lebih lembut */
+            --card-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Shadow yang lebih halus */
+        }
+        body { background-color: var(--bg-light); }
+        
+        /* 1. Responsif & Modern: Halaman Login */
+        .login-wrapper {
+            /* Membuat login container berada di tengah layar secara vertikal */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        #login-container { 
+            max-width: 400px; /* Sedikit lebih kecil */
+            width: 100%;
+            padding: 40px; 
+            box-shadow: var(--card-shadow); 
+            border-radius: 12px; /* Radius yang lebih halus */
+            background-color: white; 
+        }
+
+        /* 2. Header Dashboard Modern */
+        .header { 
+            background-color: var(--primary-color); 
+            color: white; 
+            padding: 15px 0; 
+            margin-bottom: 25px; 
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15); /* Shadow lebih kuat untuk header */
+        }
+        .header h3 { 
+            font-weight: 700; 
+            letter-spacing: 0.5px;
+        }
+
+        /* 3. Kartu Dashboard (Paket & Kelas) */
+        .card {
+            border-radius: 10px;
+            border: none;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+        }
+        .card-body h1 {
+            margin-top: 10px;
+        }
+        
+        /* 4. Tabel Mata Pelajaran */
+        .table-mapel {
+            border-radius: 8px;
+            overflow: hidden; /* Penting untuk radius di tabel */
+        }
+        .table-mapel thead {
+            background-color: var(--primary-color); /* Menggunakan warna primer */
+            color: white;
+        }
+        .table-mapel tbody tr { 
+            cursor: pointer; 
+            transition: background-color 0.2s;
+        }
+        .table-mapel tbody tr:hover { 
+            background-color: #e9ecef !important; /* Menjamin hover tetap bekerja */
+        }
+        .status-indicator { 
+            font-size: 1.2em; /* Ikon status lebih besar */
+        }
+
+        /* 5. Modal Konten - Responsif Penuh */
+        .modal.fade .modal-dialog {
+            transition: transform 0.3s ease-out;
+            transform: translate(0, -50px);
+        }
+        /* Membuat modal menjadi fullscreen di perangkat kecil */
+        @media (max-width: 576px) {
+            .modal-dialog {
+                margin: 0;
+                min-height: 100vh;
+            }
+            .modal-content {
+                min-height: 100vh;
+                border-radius: 0;
+            }
+        }
+        .modal-body {
+            display: flex; /* Untuk menampung tabs dan tab-content dengan benar */
+            flex-direction: column;
+            padding: 0;
+        }
+        .modal-body .tab-content { 
+            flex-grow: 1; /* Agar tab-content memenuhi sisa ruang */
+            height: 100%; /* Penting untuk iframe di dalamnya */
+        }
+        .modal-body iframe { 
+            width: 100%; 
+            height: 100%; 
+            min-height: 80vh; /* Agar iframe terlihat jelas */
+            border: none;
+        }
+
+        /* Tambahan untuk tab di modal */
+        .modal-body .nav-tabs {
+            padding: 0 1rem;
+        }
+        
+        /* Utility */
+        .disabled-link { 
+            cursor: not-allowed; 
+            opacity: 0.5; 
+            pointer-events: none; 
+        }
     </style>
 </head>
 <body>
 
-    <div id="login-container" class="container" style="display: block;">
-        <h2 class="text-center mb-4 text-primary"><i class="fas fa-user-graduate me-2"></i> PKBM Celah Cahaya</h2>
-        <h4 class="text-center mb-4">Portal Belajar Online</h4>
-        <form id="login-form">
-            <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control form-control-lg" id="username" required>
-            </div>
-            <div class="mb-4">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control form-control-lg" id="password" required>
-            </div>
-            <button type="submit" class="btn btn-primary btn-lg w-100" id="login-btn">
-                <span id="login-spinner" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" style="display:none;"></span>
-                MASUK
-            </button>
-            <div id="login-alert" class="alert mt-3 text-center" style="display:none;"></div>
-        </form>
+    <div class="login-wrapper" id="login-wrapper" style="display: block;">
+        <div id="login-container">
+            <h2 class="text-center mb-2 text-primary fw-bold"><i class="fas fa-user-graduate me-2"></i> PKBM Celah Cahaya</h2>
+            <p class="text-center mb-4 text-secondary">Portal Belajar Online Siswa</p>
+            <form id="login-form">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        <input type="text" class="form-control form-control-lg" id="username" required>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input type="password" class="form-control form-control-lg" id="password" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg w-100" id="login-btn">
+                    <span id="login-spinner" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" style="display:none;"></span>
+                    MASUK
+                </button>
+                <div id="login-alert" class="alert mt-3 text-center" style="display:none;"></div>
+            </form>
+        </div>
     </div>
 
-    <div id="dashboard-container" class="container-fluid" style="display: none;">
+    <div id="dashboard-container" class="container-fluid p-0" style="display: none;">
         <header class="header">
-            <div class="container d-flex justify-content-between align-items-center">
-                <h3>PKBM Celah Cahaya</h3>
-                <div class="d-flex flex-column flex-md-row align-items-center">
-                    <div class="d-flex align-items-center mb-2 mb-md-0">
-                        <span id="user-display" class="me-2 fw-bold"></span>
-                        <span id="user-nama" class="me-2 text-white small"></span> 
-                        <span id="user-noinduk" class="me-3 text-white small"></span> 
+            <div class="container-fluid d-flex justify-content-between align-items-center flex-wrap">
+                <h3 class="mb-2 mb-md-0">PKBM Celah Cahaya</h3>
+                <div class="d-flex flex-column flex-md-row align-items-md-center">
+                    <div class="d-flex align-items-center mb-2 mb-md-0 me-md-3">
+                        <i class="fas fa-user-circle me-2 text-white-50 fs-4 d-none d-md-block"></i>
+                        <span class="text-white small me-1">Selamat datang, </span>
+                        <span id="user-display" class="me-2 fw-bold text-warning"></span>
+                        <span id="user-nama" class="me-2 text-white small d-none d-lg-inline"></span>
+                        <span id="user-noinduk" class="text-white small d-none d-lg-inline"></span>
                     </div>
                     <button class="btn btn-sm btn-light" id="logout-btn"><i class="fas fa-sign-out-alt me-1"></i> Logout</button>
                 </div>
             </div>
         </header>
 
-        <div class="container">
-            <div class="row mb-5">
-                <div class="col-md-6">
-                    <div class="card shadow-sm border-0">
+        <div class="container pb-5">
+            <div class="row mb-5 gy-4">
+                <div class="col-lg-6">
+                    <div class="card shadow-lg border-start border-primary border-5 h-100">
                         <div class="card-body">
                             <h5 class="card-title text-primary"><i class="fas fa-box me-2"></i> Paket Belajar</h5>
                             <h1 id="user-paket" class="display-4 fw-bold"></h1>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="card shadow-sm border-0">
+                <div class="col-lg-6">
+                    <div class="card shadow-lg border-start border-success border-5 h-100">
                         <div class="card-body">
                             <h5 class="card-title text-success"><i class="fas fa-school me-2"></i> Kelas</h5>
                             <h1 id="user-kelas" class="display-4 fw-bold"></h1>
@@ -80,8 +200,8 @@
             <h4 class="mb-4 text-secondary"><i class="fas fa-chalkboard-teacher me-2"></i> Akses Materi Pembelajaran</h4>
             
             <div class="table-responsive">
-                <table class="table table-bordered table-mapel shadow-sm">
-                    <thead class="table-primary">
+                <table class="table table-hover table-mapel">
+                    <thead>
                         <tr>
                             <th>#</th>
                             <th>Mata Pelajaran</th>
@@ -102,17 +222,17 @@
 
             <ul class="nav nav-pills mb-3" id="laporanTabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="laporan-absensi-tab" data-bs-toggle="pill" data-bs-target="#laporan-absensi" type="button" role="tab" onclick="fetchLaporanSiswa(sessionStorage.getItem('username'))">Rekap Absensi</button>
+                    <button class="nav-link active" id="laporan-absensi-tab" data-bs-toggle="pill" data-bs-target="#laporan-absensi" type="button" role="tab" onclick="fetchLaporanSiswa(sessionStorage.getItem('username'))"><i class="fas fa-clock me-1"></i> Rekap Absensi</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="laporan-nilai-tab" data-bs-toggle="pill" data-bs-target="#laporan-nilai" type="button" role="tab" onclick="fetchLaporanSiswa(sessionStorage.getItem('username'))">Rekap Nilai</button>
+                    <button class="nav-link" id="laporan-nilai-tab" data-bs-toggle="pill" data-bs-target="#laporan-nilai" type="button" role="tab" onclick="fetchLaporanSiswa(sessionStorage.getItem('username'))"><i class="fas fa-graduation-cap me-1"></i> Rekap Nilai</button>
                 </li>
             </ul>
             
-            <div class="tab-content" id="laporanTabsContent">
+            <div class="tab-content card p-3 shadow-sm" id="laporanTabsContent">
                 <div class="tab-pane fade show active" id="laporan-absensi" role="tabpanel">
                     <div class="table-responsive">
-                        <table class="table table-striped">
+                        <table class="table table-striped table-bordered">
                             <thead class="table-info">
                                 <tr>
                                     <th>Tanggal</th>
@@ -131,15 +251,15 @@
                 
                 <div class="tab-pane fade" id="laporan-nilai" role="tabpanel">
                      <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead class="table-success" id="laporan-nilai-header">
-                                <tr><th>Memuat Data...</th></tr>
-                            </thead>
-                            <tbody id="laporan-nilai-body">
-                                <tr><td colspan="10" class="text-center text-muted">Memuat data...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
+                         <table class="table table-striped table-bordered">
+                             <thead class="table-success" id="laporan-nilai-header">
+                                 <tr><th>Memuat Data...</th></tr>
+                             </thead>
+                             <tbody id="laporan-nilai-body">
+                                 <tr><td colspan="10" class="text-center text-muted">Memuat data...</td></tr>
+                             </tbody>
+                         </table>
+                     </div>
                 </div>
             </div>
         </div>
@@ -148,12 +268,12 @@
     <div class="modal fade" id="contentModal" tabindex="-1" aria-labelledby="contentModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-fullscreen-sm-down modal-dialog-scrollable">
             <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="contentModalLabel"></h5>
+                <div class="modal-header bg-primary text-white p-3">
+                    <h5 class="modal-title fs-5" id="contentModalLabel"></h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body p-0">
-                    <ul class="nav nav-tabs" id="contentTabs" role="tablist">
+                <div class="modal-body">
+                    <ul class="nav nav-tabs sticky-top bg-white pt-2" id="contentTabs" role="tablist">
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active" id="materi-tab" data-bs-toggle="tab" data-bs-target="#materi-pane" type="button" role="tab"><i class="fas fa-book-open me-1"></i> Materi Bacaan</button>
                         </li>
@@ -164,19 +284,19 @@
                             <button class="nav-link" id="ulangan-tab" data-bs-toggle="tab" data-bs-target="#ulangan-pane" type="button" role="tab"><i class="fas fa-pencil-alt me-1"></i> Ulangan</button>
                         </li>
                     </ul>
-                    <div class="tab-content h-100" id="contentTabsContent">
+                    <div class="tab-content flex-grow-1" id="contentTabsContent">
                         <div class="tab-pane fade show active h-100" id="materi-pane" role="tabpanel" tabindex="0">
                             <iframe id="materi-iframe" src="" frameborder="0" allowfullscreen></iframe>
                         </div>
                         <div class="tab-pane fade h-100" id="tugas-pane" role="tabpanel" tabindex="0">
-                            <div class="p-3">
-                                <a id="tugas-link" href="#" target="_blank" class="btn btn-warning mb-3"><i class="fas fa-external-link-alt me-1"></i> Buka Formulir Tugas (Jendela Baru)</a>
+                            <div class="p-3 bg-light border-bottom">
+                                <a id="tugas-link" href="#" target="_blank" class="btn btn-warning w-100 w-md-auto"><i class="fas fa-external-link-alt me-1"></i> Buka Formulir Tugas (Jendela Baru)</a>
                             </div>
                             <iframe id="tugas-iframe" src="" frameborder="0" allowfullscreen></iframe>
                         </div>
                         <div class="tab-pane fade h-100" id="ulangan-pane" role="tabpanel" tabindex="0">
-                            <div class="p-3">
-                                <a id="ulangan-link" href="#" target="_blank" class="btn btn-danger mb-3"><i class="fas fa-external-link-alt me-1"></i> Buka Formulir Ulangan (Jendela Baru)</a>
+                            <div class="p-3 bg-light border-bottom">
+                                <a id="ulangan-link" href="#" target="_blank" class="btn btn-danger w-100 w-md-auto"><i class="fas fa-external-link-alt me-1"></i> Buka Formulir Ulangan (Jendela Baru)</a>
                             </div>
                             <iframe id="ulangan-iframe" src="" frameborder="0" allowfullscreen></iframe>
                         </div>
@@ -206,6 +326,7 @@
         const loginSpinner = document.getElementById('login-spinner');
         const loginAlert = document.getElementById('login-alert');
         const loginContainer = document.getElementById('login-container');
+        const loginWrapper = document.getElementById('login-wrapper'); // Tambahan: wrapper baru
         const dashboardContainer = document.getElementById('dashboard-container');
         const userPaketEl = document.getElementById('user-paket');
         const userKelasEl = document.getElementById('user-kelas'); 
@@ -236,11 +357,13 @@
         function showDashboard(username, fullKelas, paket, kelas, namaLengkap, noInduk, rowIndex = null) {
             userPaketEl.textContent = paket;
             userKelasEl.textContent = kelas;
-            userDisplayEl.textContent = `Hai, ${username}!`;
+            userDisplayEl.textContent = `${username}!`; // Ubah: Hanya tampilkan username di header
             userNamaEl.textContent = `(${namaLengkap})`; 
             userNoIndukEl.textContent = `No. Induk: ${noInduk}`; 
             
-            loginContainer.style.display = 'none';
+            // Perubahan di sini: sembunyikan wrapper
+            loginWrapper.style.display = 'none'; 
+            loginContainer.style.display = 'none'; // Sembunyikan juga container lama (walaupun sudah di dalam wrapper)
             dashboardContainer.style.display = 'block';
             
             // Absensi & Sesi
@@ -551,8 +674,8 @@
                             result.fullKelas, 
                             result.paket, 
                             result.kelas,
-                            result.nama,       
-                            result.noInduk,      
+                            result.nama,     
+                            result.noInduk,    
                             rowIndex
                         ); 
                     }, 500);
@@ -578,7 +701,8 @@
 
             sessionStorage.clear();
             dashboardContainer.style.display = 'none';
-            loginContainer.style.display = 'block';
+            loginWrapper.style.display = 'flex'; // Tampilkan kembali wrapper
+            loginContainer.style.display = 'block'; // Tampilkan kembali container
             loginAlert.style.display = 'none';
             loginForm.reset(); 
         });
@@ -611,7 +735,13 @@
                 const noInduk = sessionStorage.getItem('noInduk');     
                 const rowIndex = sessionStorage.getItem('absensiRowIndex');
 
+                // Sembunyikan login wrapper saat dashboard ditampilkan
+                loginWrapper.style.display = 'none'; 
+                
                 showDashboard(user, fullKelas, paket, kelas, namaLengkap, noInduk, rowIndex ? parseInt(rowIndex) : null);
+            } else {
+                // Tampilkan login wrapper jika belum login
+                loginWrapper.style.display = 'flex'; 
             }
         };
     </script>
