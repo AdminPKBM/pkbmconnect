@@ -186,10 +186,10 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        /** JavaScript Logic (FINAL VERSION) **/
+        /** JavaScript Logic (FINAL VERSION - Updated for iframe/preview links) **/
 
         // ==============================================================================
         //  PENTING: GANTI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
@@ -215,6 +215,22 @@
         const materiListEl = document.getElementById('materi-list');
         const logoutBtn = document.getElementById('logout-btn');
         const contentTabsEl = document.getElementById('contentTabs');
+
+        // --- FUNGSI UTILITY BARU ---
+        function getIframeUrl(link) {
+            if (!link) return '';
+            // 1. Cek jika link adalah Google Drive file/view
+            if (link.includes('/file/d/') && link.includes('/view')) {
+                // Konversi /view menjadi /preview
+                return link.replace('/view', '/preview');
+            }
+            // 2. Cek jika link adalah Google Form (harus menggunakan embedded=true)
+            if (link.includes('docs.google.com/forms/')) {
+                return link.includes('embedded=true') ? link : link + '?embedded=true';
+            }
+            // 3. Jika bukan Google Drive file/view atau Google Form, kembalikan apa adanya.
+            return link;
+        }
 
         // --- TAMPILAN DASHBOARD ---
         function showDashboard(username, fullKelas, paket, kelas, namaLengkap, noInduk, rowIndex = null) {
@@ -286,40 +302,81 @@
                 const iconOpen = '<i class="fas fa-arrow-alt-circle-right text-primary status-indicator"></i>';
                 
                 const row = document.createElement('tr');
-                row.setAttribute('onclick', `openContentModal('${m.title}', '${m.materi_link}', '${m.tugas_link}', '${m.ulangan_link}')`);
+                // Menggunakan ID/index untuk memudahkan pelacakan data, bukan memasukkan string link
+                row.setAttribute('data-mapel-index', index); 
+                row.setAttribute('onclick', `openContentModal(${index})`);
                 
+                // Cek ULANGAN: Hanya tampilkan ikon Open jika Tugas Selesai
+                let ulanganIcon = iconX;
+                if (tugasDone && m.ulangan_link) {
+                    ulanganIcon = iconOpen;
+                } else if (tugasDone && !m.ulangan_link) {
+                    ulanganIcon = '<i class="fas fa-minus-circle text-secondary status-indicator"></i>'; // Tidak ada ulangan
+                }
+
+                // Cek TUGAS: Hanya tampilkan ikon Open jika Materi Selesai
+                let tugasIcon = iconX;
+                if (materiDone && m.tugas_link) {
+                    tugasIcon = iconOpen;
+                } else if (materiDone && !m.tugas_link) {
+                     tugasIcon = '<i class="fas fa-minus-circle text-secondary status-indicator"></i>'; // Tidak ada tugas
+                } else if (tugasDone) {
+                    tugasIcon = iconCheck; // Tugas sudah selesai
+                }
+
                 row.innerHTML = `
                     <td>${index + 1}</td>
                     <td>${m.title}</td>
-                    <td class="text-center">${materiDone ? iconCheck : iconOpen}</td>
-                    <td class="text-center">${tugasDone ? iconCheck : (materiDone ? iconOpen : iconX)}</td>
-                    <td class="text-center">${tugasDone ? iconOpen : iconX}</td>
+                    <td class="text-center">${materiDone ? iconCheck : (m.materi_link ? iconOpen : iconX)}</td>
+                    <td class="text-center">${tugasIcon}</td>
+                    <td class="text-center">${ulanganIcon}</td>
                 `;
                 materiListEl.appendChild(row);
             });
         }
 
-        // --- BUKA MODAL KONTEN ---
-        window.openContentModal = function(title, materiLink, tugasLink, ulanganLink) {
-            currentMateriTitle = title;
-            document.getElementById('contentModalLabel').textContent = title;
+        // --- BUKA MODAL KONTEN (Diperbarui) ---
+        window.openContentModal = function(index) {
+            const m = currentMapelData[index];
+            if (!m) return;
+
+            currentMateriTitle = m.title;
+            document.getElementById('contentModalLabel').textContent = m.title;
             
+            const materiLink = getIframeUrl(m.materi_link);
+            const tugasLink = getIframeUrl(m.tugas_link);
+            const ulanganLink = getIframeUrl(m.ulangan_link);
+
+            // Set iframe sources
             document.getElementById('materi-iframe').src = materiLink;
             document.getElementById('tugas-iframe').src = tugasLink;
             document.getElementById('ulangan-iframe').src = ulanganLink;
             
-            document.getElementById('tugas-link').href = tugasLink ? tugasLink.replace('?embedded=true', '') : '#';
-            document.getElementById('ulangan-link').href = ulanganLink ? ulanganLink.replace('?embedded=true', '') : '#';
+            // Set external links
+            document.getElementById('tugas-link').href = m.tugas_link || '#';
+            document.getElementById('ulangan-link').href = m.ulangan_link || '#';
             
-            if (!tugasLink) document.getElementById('tugas-link').classList.add('disabled-link');
+            // Toggle disabled link classes
+            if (!m.tugas_link) document.getElementById('tugas-link').classList.add('disabled-link');
             else document.getElementById('tugas-link').classList.remove('disabled-link');
 
-            if (!ulanganLink) document.getElementById('ulangan-link').classList.add('disabled-link');
+            if (!m.ulangan_link) document.getElementById('ulangan-link').classList.add('disabled-link');
             else document.getElementById('ulangan-link').classList.remove('disabled-link');
+
+            // Kontrol tab Tugas dan Ulangan (sesuai logika lama)
+            const uniqueKey = sessionStorage.getItem('fullKelas') + "_" + currentMateriTitle;
+            const materiDone = sessionStorage.getItem(uniqueKey + "_materi_done") === 'true';
+            const tugasDone = sessionStorage.getItem(uniqueKey + "_tugas_done") === 'true';
+            
+            // Nonaktifkan tab Tugas/Ulangan jika link tidak ada
+            document.getElementById('tugas-tab').disabled = !m.tugas_link;
+            document.getElementById('ulangan-tab').disabled = !m.ulangan_link;
+
 
             const modal = new bootstrap.Modal(document.getElementById('contentModal'));
             modal.show();
             
+            // SECARA OTOMATIS TAMPILKAN MATERI (Tab pertama)
             const materiTab = new bootstrap.Tab(document.getElementById('materi-tab'));
             materiTab.show();
         }
@@ -410,9 +467,9 @@
 
             try {
                 const response = await fetch(API_ENDPOINT + '?func=doPostLaporan', { 
-                    method: 'POST',
-                    contentType: 'application/json',
-                    body: JSON.stringify({ username: username })
+                    method: 'POST', 
+                    contentType: 'application/json', 
+                    body: JSON.stringify({ username: username }) 
                 });
                 
                 const result = await response.json();
@@ -494,8 +551,8 @@
                             result.fullKelas, 
                             result.paket, 
                             result.kelas,
-                            result.nama,        
-                            result.noInduk,     
+                            result.nama,       
+                            result.noInduk,      
                             rowIndex
                         ); 
                     }, 500);
@@ -537,6 +594,7 @@
                     durationMinutes: parseFloat(durationMinutes)
                 });
 
+                // Menggunakan navigator.sendBeacon untuk memastikan absen keluar terekam bahkan saat menutup tab
                 navigator.sendBeacon(API_ENDPOINT + '?func=doPostAbsensiKeluar', new Blob([data], { type: 'application/json' }));
             }
             sessionStorage.removeItem('absensiRowIndex');
@@ -550,7 +608,7 @@
                 const paket = sessionStorage.getItem('paket');
                 const kelas = sessionStorage.getItem('kelas');
                 const namaLengkap = sessionStorage.getItem('namaLengkap'); 
-                const noInduk = sessionStorage.getItem('noInduk');       
+                const noInduk = sessionStorage.getItem('noInduk');     
                 const rowIndex = sessionStorage.getItem('absensiRowIndex');
 
                 showDashboard(user, fullKelas, paket, kelas, namaLengkap, noInduk, rowIndex ? parseInt(rowIndex) : null);
