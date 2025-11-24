@@ -48,7 +48,7 @@
         .disabled-link {
             cursor: not-allowed;
             opacity: 0.6;
-            pointer-events: none;
+            pointer-events: none; /* Penting untuk mencegah klik */
         }
     </style>
 </head>
@@ -89,7 +89,7 @@
             <h4 class="mb-4 text-secondary">Akses Materi Pembelajaran</h4>
             
             <div id="materi-list" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-            </div>
+                </div>
 
             <hr class="my-5">
 
@@ -151,18 +151,16 @@
         </div>
     </div>
 
-   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        /** JavaScript Logic (UPDATED: Dynamic Data Fetching) **/
+        /** JavaScript Logic (Dynamic Data Fetching) **/
 
-        // PASTE WEB APP URL ANDA DI SINI
+        // ==============================================================================
+        //  PENTING: GANTI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
+        // ==============================================================================
         const API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbw4pWtRLtiW_JWQcwHJEVhleguuyCayolUHFccL-dphN5K7jD38Nk4rkLrzhX8sV1Rb/exec'; 
         
-        // ==============================================================================
-        // HAPUS DATA STATIS MATERI_DATA
-        // ==============================================================================
-
         // --- Variabel & DOM Elements ---
         const loginForm = document.getElementById('login-form');
         const loginBtn = document.getElementById('login-btn');
@@ -184,9 +182,10 @@
             loginContainer.style.display = 'none';
             dashboardContainer.style.display = 'block';
             
-            // Panggil fungsi baru untuk mengambil dan menampilkan daftar mapel
+            // Ambil dan tampilkan daftar mata pelajaran sesuai kelas
             fetchMataPelajaran(kelas); 
             
+            // Ambil dan tampilkan rekap nilai
             fetchNilai(username); 
             
             sessionStorage.setItem('loggedIn', 'true');
@@ -219,15 +218,14 @@
             }
         }
         
-        // --- FUNGSI GENERATE DAFTAR MATERI (Menerima data dari fetch) ---
+        // --- FUNGSI GENERATE DAFTAR MATERI (Merender Card) ---
         function generateMateriList(materiArr) {
-            materiListEl.innerHTML = ''; // Kosongkan
+            materiListEl.innerHTML = '';
             
             materiArr.forEach((m) => {
                 const col = document.createElement('div');
                 col.className = 'col';
                 
-                // Pastikan link tugas/ulangan tidak undefined sebelum dipass
                 const tugasLink = m.tugas_link || '';
                 const ulanganLink = m.ulangan_link || '';
                 
@@ -252,31 +250,32 @@
             currentMateriTitle = title;
             document.getElementById('contentModalLabel').textContent = title;
             
+            // Set iFrame sources
             document.getElementById('materi-iframe').src = materiLink;
             document.getElementById('tugas-iframe').src = tugasLink;
             document.getElementById('ulangan-iframe').src = ulanganLink;
             
-            // Hapus "?embedded=true" hanya jika linknya ada
+            // Set Link Buka Jendela Baru (Hilangkan ?embedded=true)
             document.getElementById('tugas-link').href = tugasLink ? tugasLink.replace('?embedded=true', '') : '#';
             document.getElementById('ulangan-link').href = ulanganLink ? ulanganLink.replace('?embedded=true', '') : '#';
             
-            // Atur status tombol (jika link kosong, tambahkan class disabled-link)
+            // Kontrol Tampilan Tombol/Tab
             if (!tugasLink) document.getElementById('tugas-link').classList.add('disabled-link');
             else document.getElementById('tugas-link').classList.remove('disabled-link');
 
             if (!ulanganLink) document.getElementById('ulangan-link').classList.add('disabled-link');
             else document.getElementById('ulangan-link').classList.remove('disabled-link');
 
-
+            // Tampilkan Modal
             const modal = new bootstrap.Modal(document.getElementById('contentModal'));
             modal.show();
             
+            // Default: Kembali ke tab Materi Bacaan
             const materiTab = new bootstrap.Tab(document.getElementById('materi-tab'));
             materiTab.show();
         }
 
         // --- LOGIKA FLOW KONTROL: MATERI -> TUGAS -> ULANGAN ---
-
         contentTabsEl.addEventListener('show.bs.tab', function (event) {
             const targetTab = event.target.id;
             
@@ -297,6 +296,7 @@
             }
         });
         
+        // Tandai Progres Selesai
         document.getElementById('materi-tab').addEventListener('shown.bs.tab', function () {
             const uniqueKey = sessionStorage.getItem('kelas') + "_" + currentMateriTitle;
             sessionStorage.setItem(uniqueKey + "_materi_done", 'true');
@@ -308,7 +308,6 @@
         });
 
         // --- LOGIKA AMBIL NILAI ---
-
         async function fetchNilai(username) {
             const nilaiRekapEl = document.getElementById('nilai-rekap');
             const nilaiHeaderRowEl = document.getElementById('nilai-header-row');
@@ -340,7 +339,7 @@
 
             } catch (error) {
                 nilaiHeaderRowEl.innerHTML = '<th>No.</th><th>Informasi Nilai</th>';
-                nilaiRekapEl.innerHTML = `<tr><td colspan="10" class="text-center text-danger">Gagal memuat data. Periksa koneksi atau konfigurasi API.</td></tr>`;
+                nilaiRekapEl.innerHTML = `<tr><td colspan="10" class="text-center text-danger">Gagal memuat data nilai.</td></tr>`;
             }
         }
 
@@ -369,7 +368,6 @@
                 if (result.success) {
                     loginAlert.className = 'alert alert-success';
                     loginAlert.textContent = result.message;
-                    // Pastikan kelas diambil dari Apps Script
                     setTimeout(() => { showDashboard(result.user, result.kelas); }, 500);
                 } else {
                     loginAlert.className = 'alert alert-danger';
