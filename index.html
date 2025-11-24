@@ -412,52 +412,61 @@
             }
         }
         
-        // --- GENERATE DAFTAR MATERI (TABEL) ---
-        function generateMateriListTable(materiArr) {
-            materiListEl.innerHTML = '';
-            
-            materiArr.forEach((m, index) => {
-                const uniqueKey = sessionStorage.getItem('fullKelas') + "_" + m.title;
-                const materiDone = sessionStorage.getItem(uniqueKey + "_materi_done") === 'true';
-                const tugasDone = sessionStorage.getItem(uniqueKey + "_tugas_done") === 'true';
+      // --- GENERATE DAFTAR MATERI (TABEL) ---
+function generateMateriListTable(materiArr) {
+    materiListEl.innerHTML = '';
+    
+    materiArr.forEach((m, index) => {
+        const uniqueKey = sessionStorage.getItem('fullKelas') + "_" + m.title;
+        const materiDone = sessionStorage.getItem(uniqueKey + "_materi_done") === 'true';
+        const tugasDone = sessionStorage.getItem(uniqueKey + "_tugas_done") === 'true';
 
-                const iconCheck = '<i class="fas fa-check-circle text-success status-indicator"></i>';
-                const iconX = '<i class="fas fa-times-circle text-danger status-indicator"></i>';
-                const iconOpen = '<i class="fas fa-arrow-alt-circle-right text-primary status-indicator"></i>';
-                
-                const row = document.createElement('tr');
-                // Menggunakan ID/index untuk memudahkan pelacakan data, bukan memasukkan string link
-                row.setAttribute('data-mapel-index', index); 
-                row.setAttribute('onclick', `openContentModal(${index})`);
-                
-                // Cek ULANGAN: Hanya tampilkan ikon Open jika Tugas Selesai
-                let ulanganIcon = iconX;
-                if (tugasDone && m.ulangan_link) {
-                    ulanganIcon = iconOpen;
-                } else if (tugasDone && !m.ulangan_link) {
-                    ulanganIcon = '<i class="fas fa-minus-circle text-secondary status-indicator"></i>'; // Tidak ada ulangan
-                }
-
-                // Cek TUGAS: Hanya tampilkan ikon Open jika Materi Selesai
-                let tugasIcon = iconX;
-                if (materiDone && m.tugas_link) {
-                    tugasIcon = iconOpen;
-                } else if (materiDone && !m.tugas_link) {
-                     tugasIcon = '<i class="fas fa-minus-circle text-secondary status-indicator"></i>'; // Tidak ada tugas
-                } else if (tugasDone) {
-                    tugasIcon = iconCheck; // Tugas sudah selesai
-                }
-
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${m.title}</td>
-                    <td class="text-center">${materiDone ? iconCheck : (m.materi_link ? iconOpen : iconX)}</td>
-                    <td class="text-center">${tugasIcon}</td>
-                    <td class="text-center">${ulanganIcon}</td>
-                `;
-                materiListEl.appendChild(row);
-            });
+        // Definisi Ikon
+        const iconCheck = '<i class="fas fa-check-circle text-success status-indicator"></i>';
+        const iconX = '<i class="fas fa-times-circle text-danger status-indicator"></i>';
+        const iconOpen = '<i class="fas fa-arrow-alt-circle-right text-primary status-indicator"></i>';
+        const iconZoom = '<i class="fas fa-video text-info status-indicator"></i>'; // ICON BARU untuk Zoom
+        
+        const row = document.createElement('tr');
+        // Menggunakan ID/index untuk memudahkan pelacakan data, bukan memasukkan string link
+        row.setAttribute('data-mapel-index', index);
+        // Hapus onclick dari <tr> agar user bisa klik kolom zoom terpisah
+        // row.setAttribute('onclick', `openContentModal(${index})`); 
+        
+        // Cek ULANGAN: Hanya tampilkan ikon Open jika Tugas Selesai
+        let ulanganIcon = iconX;
+        if (tugasDone && m.ulangan_link) {
+            ulanganIcon = iconOpen;
+        } else if (tugasDone && !m.ulangan_link) {
+            ulanganIcon = '<i class="fas fa-minus-circle text-secondary status-indicator"></i>'; // Tidak ada ulangan
         }
+
+        // Cek TUGAS: Hanya tampilkan ikon Open jika Materi Selesai
+        let tugasIcon = iconX;
+        if (materiDone && m.tugas_link) {
+            tugasIcon = iconOpen;
+        } else if (materiDone && !m.tugas_link) {
+            tugasIcon = '<i class="fas fa-minus-circle text-secondary status-indicator"></i>'; // Tidak ada tugas
+        } else if (tugasDone) {
+            tugasIcon = iconCheck; // Tugas sudah selesai
+        }
+
+        // LOGIKA BARU UNTUK LINK ZOOM
+        let zoomIcon = iconX;
+        let zoomClick = '';
+        if (m.zoom_link) {
+            zoomIcon = iconZoom;
+            // Gunakan event click untuk membuka link Zoom di jendela baru
+            zoomClick = `onclick="window.open('${m.zoom_link}', '_blank'); event.stopPropagation();"`;
+        }
+
+        // BARIS DENGAN DATA SELAIN ZOOM
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td onclick="openContentModal(${index})">${m.title}</td> <td class="text-center" onclick="openContentModal(${index})">${materiDone ? iconCheck : (m.materi_link ? iconOpen : iconX)}</td> <td class="text-center" onclick="openContentModal(${index})">${tugasIcon}</td> <td class="text-center" onclick="openContentModal(${index})">${ulanganIcon}</td> <td class="text-center" ${zoomClick}>${zoomIcon}</td> `;
+        materiListEl.appendChild(row);
+    });
+}
 
         // --- BUKA MODAL KONTEN (Diperbarui) ---
         window.openContentModal = function(index) {
