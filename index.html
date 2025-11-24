@@ -151,69 +151,17 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        /** JavaScript Logic **/
+        /** JavaScript Logic (UPDATED: Dynamic Data Fetching) **/
 
         // PASTE WEB APP URL ANDA DI SINI
         const API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbw4pWtRLtiW_JWQcwHJEVhleguuyCayolUHFccL-dphN5K7jD38Nk4rkLrzhX8sV1Rb/exec'; 
         
         // ==============================================================================
-        // DATA MATERI PER KELAS (WAJIB diisi dengan Link Drive dan Form yang benar)
+        // HAPUS DATA STATIS MATERI_DATA
         // ==============================================================================
-        const MATERI_DATA = {
-            // -------------- PAKET B --------------
-            "Paket B Kelas 7": [
-                {
-                    title: "Materi 1: Pengantar Kewarganegaraan",
-                    materi_link: "https://drive.google.com/file/d/ID_FILE_DRIVE_ANDA_B7_M1/preview", 
-                    tugas_link: "https://docs.google.com/forms/d/ID_FORM_TUGAS_B7_M1/viewform?embedded=true",
-                    ulangan_link: "https://docs.google.com/forms/d/ID_FORM_ULANGAN_B7_M1/viewform?embedded=true"
-                },
-            ],
-            "Paket B Kelas 8": [
-                {
-                    title: "Materi 1: Ilmu Pengetahuan Alam (IPA)",
-                    materi_link: "https://drive.google.com/file/d/ID_FILE_DRIVE_ANDA_B8_M1/preview", 
-                    tugas_link: "https://docs.google.com/forms/d/ID_FORM_TUGAS_B8_M1/viewform?embedded=true",
-                    ulangan_link: "https://docs.google.com/forms/d/ID_FORM_ULANGAN_B8_M1/viewform?embedded=true"
-                },
-            ],
-            "Paket B Kelas 9": [
-                {
-                    title: "Materi 1: Bahasa Inggris Dasar",
-                    materi_link: "https://drive.google.com/file/d/ID_FILE_DRIVE_ANDA_B9_M1/preview", 
-                    tugas_link: "https://docs.google.com/forms/d/ID_FORM_TUGAS_B9_M1/viewform?embedded=true",
-                    ulangan_link: "https://docs.google.com/forms/d/ID_FORM_ULANGAN_B9_M1/viewform?embedded=true"
-                },
-            ],
-            // -------------- PAKET C --------------
-            "Paket C Kelas 10": [
-                {
-                    title: "Materi 1: Pengantar Akuntansi",
-                    materi_link: "https://drive.google.com/file/d/ID_FILE_DRIVE_ANDA_C10_M1/preview", 
-                    tugas_link: "https://docs.google.com/forms/d/ID_FORM_TUGAS_C10_M1/viewform?embedded=true",
-                    ulangan_link: "https://docs.google.com/forms/d/ID_FORM_ULANGAN_C10_M1/viewform?embedded=true"
-                },
-            ],
-            "Paket C Kelas 11": [
-                {
-                    title: "Materi 1: Ekonomi Bisnis & Manajemen",
-                    materi_link: "https://drive.google.com/file/d/ID_FILE_DRIVE_ANDA_C11_M1/preview", 
-                    tugas_link: "https://docs.google.com/forms/d/ID_FORM_TUGAS_C11_M1/viewform?embedded=true",
-                    ulangan_link: "https://docs.google.com/forms/d/ID_FORM_ULANGAN_C11_M1/viewform?embedded=true"
-                },
-            ],
-            "Paket C Kelas 12": [
-                {
-                    title: "Materi 1: Analisis Data & Statistika",
-                    materi_link: "https://drive.google.com/file/d/ID_FILE_DRIVE_ANDA_C12_M1/preview", 
-                    tugas_link: "https://docs.google.com/forms/d/ID_FORM_TUGAS_C12_M1/viewform?embedded=true",
-                    ulangan_link: "https://docs.google.com/forms/d/ID_FORM_ULANGAN_C12_M1/viewform?embedded=true"
-                },
-            ]
-        };
 
         // --- Variabel & DOM Elements ---
         const loginForm = document.getElementById('login-form');
@@ -236,24 +184,56 @@
             loginContainer.style.display = 'none';
             dashboardContainer.style.display = 'block';
             
-            generateMateriList(kelas);
-            fetchNilai(username); // Ambil rekap nilai
+            // Panggil fungsi baru untuk mengambil dan menampilkan daftar mapel
+            fetchMataPelajaran(kelas); 
+            
+            fetchNilai(username); 
             
             sessionStorage.setItem('loggedIn', 'true');
             sessionStorage.setItem('username', username);
             sessionStorage.setItem('kelas', kelas);
         }
 
-        // --- FUNGSI GENERATE DAFTAR MATERI ---
-        function generateMateriList(kelas) {
-            materiListEl.innerHTML = '';
-            const materiArr = MATERI_DATA[kelas] || [];
+        // --- FUNGSI AMBIL MATA PELAJARAN DARI APPS SCRIPT ---
+        async function fetchMataPelajaran(kelas) {
+            materiListEl.innerHTML = '<div class="col-12 text-center text-muted">Mengambil data mata pelajaran...</div>';
+            
+            try {
+                const response = await fetch(API_ENDPOINT + '?func=doPostMapel', { 
+                    method: 'POST',
+                    contentType: 'application/json',
+                    body: JSON.stringify({ kelas: kelas })
+                });
+                
+                const result = await response.json();
 
+                if (result.success && result.mapel.length > 0) {
+                    generateMateriList(result.mapel);
+                } else {
+                    materiListEl.innerHTML = `<div class="col-12 text-center alert alert-warning">${result.message || 'Gagal memuat mata pelajaran.'}</div>`;
+                }
+
+            } catch (error) {
+                console.error('Error fetching mata pelajaran:', error);
+                materiListEl.innerHTML = '<div class="col-12 text-center alert alert-danger">Gagal memuat data mata pelajaran. Periksa koneksi API Anda.</div>';
+            }
+        }
+        
+        // --- FUNGSI GENERATE DAFTAR MATERI (Menerima data dari fetch) ---
+        function generateMateriList(materiArr) {
+            materiListEl.innerHTML = ''; // Kosongkan
+            
             materiArr.forEach((m) => {
                 const col = document.createElement('div');
                 col.className = 'col';
+                
+                // Pastikan link tugas/ulangan tidak undefined sebelum dipass
+                const tugasLink = m.tugas_link || '';
+                const ulanganLink = m.ulangan_link || '';
+                
                 col.innerHTML = `
-                    <div class="card card-materi shadow-sm h-100" onclick="openContentModal('${m.title}', '${m.materi_link}', '${m.tugas_link}', '${m.ulangan_link}')">
+                    <div class="card card-materi shadow-sm h-100" 
+                        onclick="openContentModal('${m.title}', '${m.materi_link}', '${tugasLink}', '${ulanganLink}')">
                         <div class="card-body">
                             <h5 class="card-title text-primary"><i class="fas fa-folder me-2"></i>${m.title}</h5>
                             <p class="card-text text-muted small">Materi | Tugas | Ulangan</p>
@@ -276,13 +256,21 @@
             document.getElementById('tugas-iframe').src = tugasLink;
             document.getElementById('ulangan-iframe').src = ulanganLink;
             
-            document.getElementById('tugas-link').href = tugasLink.replace('?embedded=true', '');
-            document.getElementById('ulangan-link').href = ulanganLink.replace('?embedded=true', '');
+            // Hapus "?embedded=true" hanya jika linknya ada
+            document.getElementById('tugas-link').href = tugasLink ? tugasLink.replace('?embedded=true', '') : '#';
+            document.getElementById('ulangan-link').href = ulanganLink ? ulanganLink.replace('?embedded=true', '') : '#';
+            
+            // Atur status tombol (jika link kosong, tambahkan class disabled-link)
+            if (!tugasLink) document.getElementById('tugas-link').classList.add('disabled-link');
+            else document.getElementById('tugas-link').classList.remove('disabled-link');
+
+            if (!ulanganLink) document.getElementById('ulangan-link').classList.add('disabled-link');
+            else document.getElementById('ulangan-link').classList.remove('disabled-link');
+
 
             const modal = new bootstrap.Modal(document.getElementById('contentModal'));
             modal.show();
             
-            // Reset ke tab Materi Bacaan saat modal dibuka
             const materiTab = new bootstrap.Tab(document.getElementById('materi-tab'));
             materiTab.show();
         }
@@ -297,13 +285,11 @@
             const tugasKey = uniqueKey + "_tugas_done";
 
             if (targetTab === 'tugas-tab') {
-                // MENGAKSES TUGAS: Membutuhkan Materi Selesai
                 if (sessionStorage.getItem(materiKey) !== 'true') {
                     event.preventDefault(); 
                     alert("Anda harus mengakses 'Materi Bacaan' terlebih dahulu sebelum mengerjakan Tugas.");
                 }
             } else if (targetTab === 'ulangan-tab') {
-                // MENGAKSES ULANGAN: Membutuhkan Tugas Selesai
                 if (sessionStorage.getItem(tugasKey) !== 'true') {
                     event.preventDefault(); 
                     alert("Anda harus menyelesaikan 'Tugas' terlebih dahulu sebelum mengakses Ulangan.");
@@ -311,13 +297,11 @@
             }
         });
         
-        // Tandai Materi Selesai Saat Tab Materi Bacaan Diakses
         document.getElementById('materi-tab').addEventListener('shown.bs.tab', function () {
             const uniqueKey = sessionStorage.getItem('kelas') + "_" + currentMateriTitle;
             sessionStorage.setItem(uniqueKey + "_materi_done", 'true');
         });
         
-        // Tandai Tugas Selesai Saat Tab Tugas Diakses
         document.getElementById('tugas-tab').addEventListener('shown.bs.tab', function () {
             const uniqueKey = sessionStorage.getItem('kelas') + "_" + currentMateriTitle;
             sessionStorage.setItem(uniqueKey + "_tugas_done", 'true');
@@ -333,7 +317,6 @@
             nilaiHeaderRowEl.innerHTML = '';
             
             try {
-                // Panggil Apps Script dengan parameter func=doPostNilai
                 const response = await fetch(API_ENDPOINT + '?func=doPostNilai', { 
                     method: 'POST',
                     contentType: 'application/json',
@@ -343,10 +326,8 @@
                 const result = await response.json();
 
                 if (result.success && result.rekap.length > 0) {
-                    // 1. GENERATE HEADER
                     nilaiHeaderRowEl.innerHTML = '<th>No.</th>' + result.headers.map(header => `<th>${header}</th>`).join('');
 
-                    // 2. GENERATE ISI TABEL
                     nilaiRekapEl.innerHTML = result.rekap.map((record, index) => {
                         const rowData = result.headers.map(header => `<td>${record[header] || '-'}</td>`).join('');
                         return `<tr><td>${index + 1}</td>${rowData}</tr>`;
@@ -359,7 +340,7 @@
 
             } catch (error) {
                 nilaiHeaderRowEl.innerHTML = '<th>No.</th><th>Informasi Nilai</th>';
-                nilaiRekapEl.innerHTML = `<tr><td colspan="10" class="text-center text-danger">Gagal memuat data. Pastikan API_ENDPOINT sudah benar.</td></tr>`;
+                nilaiRekapEl.innerHTML = `<tr><td colspan="10" class="text-center text-danger">Gagal memuat data. Periksa koneksi atau konfigurasi API.</td></tr>`;
             }
         }
 
@@ -388,6 +369,7 @@
                 if (result.success) {
                     loginAlert.className = 'alert alert-success';
                     loginAlert.textContent = result.message;
+                    // Pastikan kelas diambil dari Apps Script
                     setTimeout(() => { showDashboard(result.user, result.kelas); }, 500);
                 } else {
                     loginAlert.className = 'alert alert-danger';
