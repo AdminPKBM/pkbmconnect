@@ -21,7 +21,6 @@
         
         /* 1. Responsif & Modern: Halaman Login */
         .login-wrapper {
-            /* Membuat login container berada di tengah layar secara vertikal */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -30,11 +29,11 @@
         }
 
         #login-container { 
-            max-width: 400px; /* Sedikit lebih kecil */
+            max-width: 400px; 
             width: 100%;
             padding: 40px; 
             box-shadow: var(--card-shadow); 
-            border-radius: 12px; /* Radius yang lebih halus */
+            border-radius: 12px; 
             background-color: white; 
         }
 
@@ -44,7 +43,7 @@
             color: white; 
             padding: 15px 0; 
             margin-bottom: 25px; 
-            box-shadow: 0 3px 6px rgba(0,0,0,0.15); /* Shadow lebih kuat untuk header */
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15); 
         }
         .header h3 { 
             font-weight: 700; 
@@ -68,21 +67,21 @@
         /* 4. Tabel Mata Pelajaran */
         .table-mapel {
             border-radius: 8px;
-            overflow: hidden; /* Penting untuk radius di tabel */
+            overflow: hidden; 
         }
         .table-mapel thead {
-            background-color: var(--primary-color); /* Menggunakan warna primer */
+            background-color: var(--primary-color); 
             color: white;
         }
         .table-mapel tbody tr { 
-            cursor: pointer; 
             transition: background-color 0.2s;
         }
+        /* Hanya baris yang punya aksi yang cursor pointer, dihandle via inline style/js nanti */
         .table-mapel tbody tr:hover { 
-            background-color: #e9ecef !important; /* Menjamin hover tetap bekerja */
+            background-color: #e9ecef !important; 
         }
         .status-indicator { 
-            font-size: 1.2em; /* Ikon status lebih besar */
+            font-size: 1.2em; 
         }
 
         /* 5. Modal Konten - Responsif Penuh */
@@ -90,7 +89,6 @@
             transition: transform 0.3s ease-out;
             transform: translate(0, -50px);
         }
-        /* Membuat modal menjadi fullscreen di perangkat kecil */
         @media (max-width: 576px) {
             .modal-dialog {
                 margin: 0;
@@ -102,22 +100,21 @@
             }
         }
         .modal-body {
-            display: flex; /* Untuk menampung tabs dan tab-content dengan benar */
+            display: flex; 
             flex-direction: column;
             padding: 0;
         }
         .modal-body .tab-content { 
-            flex-grow: 1; /* Agar tab-content memenuhi sisa ruang */
-            height: 100%; /* Penting untuk iframe di dalamnya */
+            flex-grow: 1; 
+            height: 100%; 
         }
         .modal-body iframe { 
             width: 100%; 
             height: 100%; 
-            min-height: 80vh; /* Agar iframe terlihat jelas */
+            min-height: 80vh; 
             border: none;
         }
 
-        /* Tambahan untuk tab di modal */
         .modal-body .nav-tabs {
             padding: 0 1rem;
         }
@@ -205,14 +202,14 @@
                         <tr>
                             <th>#</th>
                             <th>Mata Pelajaran</th>
-                           <th class="text-center">Materi</th>
-            <th class="text-center">Tugas</th>
-            <th class="text-center">Ulangan</th>
-            <th class="text-center">Link Zoom</th> 
+                            <th class="text-center">Materi</th>
+                            <th class="text-center">Tugas</th>
+                            <th class="text-center">Ulangan</th>
+                            <th class="text-center">Link Zoom</th> 
                         </tr>
                     </thead>
                     <tbody id="materi-list">
-                        <tr><td colspan="5" class="text-center text-muted">Memuat data mata pelajaran...</td></tr>
+                        <tr><td colspan="6" class="text-center text-muted">Memuat data mata pelajaran...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -310,7 +307,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        /** JavaScript Logic (FINAL VERSION - Updated for iframe/preview links) **/
+        /** JavaScript Logic (FINAL VERSION - Zoom Fix & Complete Code) **/
 
         // ==============================================================================
         //  PENTING: GANTI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
@@ -327,7 +324,7 @@
         const loginSpinner = document.getElementById('login-spinner');
         const loginAlert = document.getElementById('login-alert');
         const loginContainer = document.getElementById('login-container');
-        const loginWrapper = document.getElementById('login-wrapper'); // Tambahan: wrapper baru
+        const loginWrapper = document.getElementById('login-wrapper'); 
         const dashboardContainer = document.getElementById('dashboard-container');
         const userPaketEl = document.getElementById('user-paket');
         const userKelasEl = document.getElementById('user-kelas'); 
@@ -338,19 +335,15 @@
         const logoutBtn = document.getElementById('logout-btn');
         const contentTabsEl = document.getElementById('contentTabs');
 
-        // --- FUNGSI UTILITY BARU ---
+        // --- FUNGSI UTILITY ---
         function getIframeUrl(link) {
             if (!link) return '';
-            // 1. Cek jika link adalah Google Drive file/view
             if (link.includes('/file/d/') && link.includes('/view')) {
-                // Konversi /view menjadi /preview
                 return link.replace('/view', '/preview');
             }
-            // 2. Cek jika link adalah Google Form (harus menggunakan embedded=true)
             if (link.includes('docs.google.com/forms/')) {
                 return link.includes('embedded=true') ? link : link + '?embedded=true';
             }
-            // 3. Jika bukan Google Drive file/view atau Google Form, kembalikan apa adanya.
             return link;
         }
 
@@ -358,13 +351,12 @@
         function showDashboard(username, fullKelas, paket, kelas, namaLengkap, noInduk, rowIndex = null) {
             userPaketEl.textContent = paket;
             userKelasEl.textContent = kelas;
-            userDisplayEl.textContent = `${username}!`; // Ubah: Hanya tampilkan username di header
+            userDisplayEl.textContent = `${username}!`; 
             userNamaEl.textContent = `(${namaLengkap})`; 
             userNoIndukEl.textContent = `No. Induk: ${noInduk}`; 
             
-            // Perubahan di sini: sembunyikan wrapper
             loginWrapper.style.display = 'none'; 
-            loginContainer.style.display = 'none'; // Sembunyikan juga container lama (walaupun sudah di dalam wrapper)
+            loginContainer.style.display = 'none'; 
             dashboardContainer.style.display = 'block';
             
             // Absensi & Sesi
@@ -377,18 +369,17 @@
             sessionStorage.setItem('paket', paket);
             sessionStorage.setItem('kelas', kelas);
             sessionStorage.setItem('namaLengkap', namaLengkap); 
-            sessionStorage.setItem('noInduk', noInduk);      
+            sessionStorage.setItem('noInduk', noInduk);       
             if (rowIndex) {
                 sessionStorage.setItem('absensiRowIndex', rowIndex);
             }
             
             fetchMataPelajaran(fullKelas); 
-            // Tidak perlu memanggil fetchNilai di sini, karena Laporan Siswa yang akan memuatnya.
         }
 
         // --- FUNGSI AMBIL MATA PELAJARAN ---
         async function fetchMataPelajaran(fullKelas) {
-            materiListEl.innerHTML = `<tr><td colspan="5" class="text-center text-muted">Mengambil data mata pelajaran untuk ${fullKelas}...</td></tr>`;
+            materiListEl.innerHTML = `<tr><td colspan="6" class="text-center text-muted">Mengambil data mata pelajaran untuk ${fullKelas}...</td></tr>`;
             
             try {
                 const response = await fetch(API_ENDPOINT + '?func=doPostMapel', { 
@@ -403,72 +394,74 @@
                     currentMapelData = result.mapel; 
                     generateMateriListTable(currentMapelData);
                 } else {
-                    materiListEl.innerHTML = `<tr><td colspan="5" class="text-center alert alert-warning">${result.message || 'Gagal memuat mata pelajaran.'}</td></tr>`;
+                    materiListEl.innerHTML = `<tr><td colspan="6" class="text-center alert alert-warning">${result.message || 'Gagal memuat mata pelajaran.'}</td></tr>`;
                 }
 
             } catch (error) {
                 console.error('Error fetching mata pelajaran:', error);
-                materiListEl.innerHTML = `<tr><td colspan="5" class="text-center alert alert-danger">Gagal memuat data mata pelajaran. Periksa koneksi API Anda.</td></tr>`;
+                materiListEl.innerHTML = `<tr><td colspan="6" class="text-center alert alert-danger">Gagal memuat data mata pelajaran. Periksa koneksi API Anda.</td></tr>`;
             }
         }
         
-      // --- GENERATE DAFTAR MATERI (TABEL) ---
-function generateMateriListTable(materiArr) {
-    materiListEl.innerHTML = '';
-    
-    materiArr.forEach((m, index) => {
-        const uniqueKey = sessionStorage.getItem('fullKelas') + "_" + m.title;
-        const materiDone = sessionStorage.getItem(uniqueKey + "_materi_done") === 'true';
-        const tugasDone = sessionStorage.getItem(uniqueKey + "_tugas_done") === 'true';
+        // --- GENERATE DAFTAR MATERI (TABEL) - DENGAN PERBAIKAN ZOOM ---
+        function generateMateriListTable(materiArr) {
+            materiListEl.innerHTML = '';
+            
+            materiArr.forEach((m, index) => {
+                const uniqueKey = sessionStorage.getItem('fullKelas') + "_" + m.title;
+                const materiDone = sessionStorage.getItem(uniqueKey + "_materi_done") === 'true';
+                const tugasDone = sessionStorage.getItem(uniqueKey + "_tugas_done") === 'true';
 
-        // Definisi Ikon
-        const iconCheck = '<i class="fas fa-check-circle text-success status-indicator"></i>';
-        const iconX = '<i class="fas fa-times-circle text-danger status-indicator"></i>';
-        const iconOpen = '<i class="fas fa-arrow-alt-circle-right text-primary status-indicator"></i>';
-        const iconZoom = '<i class="fas fa-video text-info status-indicator"></i>'; // ICON BARU untuk Zoom
-        
-        const row = document.createElement('tr');
-        // Menggunakan ID/index untuk memudahkan pelacakan data, bukan memasukkan string link
-        row.setAttribute('data-mapel-index', index);
-        // Hapus onclick dari <tr> agar user bisa klik kolom zoom terpisah
-        // row.setAttribute('onclick', `openContentModal(${index})`); 
-        
-        // Cek ULANGAN: Hanya tampilkan ikon Open jika Tugas Selesai
-        let ulanganIcon = iconX;
-        if (tugasDone && m.ulangan_link) {
-            ulanganIcon = iconOpen;
-        } else if (tugasDone && !m.ulangan_link) {
-            ulanganIcon = '<i class="fas fa-minus-circle text-secondary status-indicator"></i>'; // Tidak ada ulangan
+                // Definisi Ikon
+                const iconCheck = '<i class="fas fa-check-circle text-success status-indicator"></i>';
+                const iconX = '<i class="fas fa-times-circle text-danger status-indicator"></i>';
+                const iconOpen = '<i class="fas fa-arrow-alt-circle-right text-primary status-indicator"></i>';
+                const iconZoom = '<i class="fas fa-video text-info status-indicator"></i>'; 
+                
+                const row = document.createElement('tr');
+                row.setAttribute('data-mapel-index', index);
+                
+                // Ikon Ulangan
+                let ulanganIcon = iconX;
+                if (tugasDone && m.ulangan_link) {
+                    ulanganIcon = iconOpen;
+                } else if (tugasDone && !m.ulangan_link) {
+                    ulanganIcon = '<i class="fas fa-minus-circle text-secondary status-indicator"></i>'; 
+                }
+
+                // Ikon Tugas
+                let tugasIcon = iconX;
+                if (materiDone && m.tugas_link) {
+                    tugasIcon = iconOpen;
+                } else if (materiDone && !m.tugas_link) {
+                    tugasIcon = '<i class="fas fa-minus-circle text-secondary status-indicator"></i>';
+                } else if (tugasDone) {
+                    tugasIcon = iconCheck;
+                }
+
+                // LOGIKA ZOOM (FIX)
+                let zoomCellHtml = '';
+                if (m.zoom_link && m.zoom_link.trim() !== "") {
+                    // event.stopPropagation() mencegah modal terbuka saat klik zoom
+                    zoomCellHtml = `<td class="text-center" style="cursor: pointer;" onclick="event.stopPropagation(); window.open('${m.zoom_link}', '_blank');">${iconZoom}</td>`;
+                } else {
+                    zoomCellHtml = `<td class="text-center text-muted" style="cursor: default;">${iconX}</td>`;
+                }
+
+                // Render Baris
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td onclick="openContentModal(${index})" style="cursor: pointer;">${m.title}</td> 
+                    <td class="text-center" onclick="openContentModal(${index})" style="cursor: pointer;">${materiDone ? iconCheck : (m.materi_link ? iconOpen : iconX)}</td> 
+                    <td class="text-center" onclick="openContentModal(${index})" style="cursor: pointer;">${tugasIcon}</td> 
+                    <td class="text-center" onclick="openContentModal(${index})" style="cursor: pointer;">${ulanganIcon}</td> 
+                    ${zoomCellHtml} 
+                `;
+                materiListEl.appendChild(row);
+            });
         }
 
-        // Cek TUGAS: Hanya tampilkan ikon Open jika Materi Selesai
-        let tugasIcon = iconX;
-        if (materiDone && m.tugas_link) {
-            tugasIcon = iconOpen;
-        } else if (materiDone && !m.tugas_link) {
-            tugasIcon = '<i class="fas fa-minus-circle text-secondary status-indicator"></i>'; // Tidak ada tugas
-        } else if (tugasDone) {
-            tugasIcon = iconCheck; // Tugas sudah selesai
-        }
-
-        // LOGIKA BARU UNTUK LINK ZOOM
-        let zoomIcon = iconX;
-        let zoomClick = '';
-        if (m.zoom_link) {
-            zoomIcon = iconZoom;
-            // Gunakan event click untuk membuka link Zoom di jendela baru
-            zoomClick = `onclick="window.open('${m.zoom_link}', '_blank'); event.stopPropagation();"`;
-        }
-
-        // BARIS DENGAN DATA SELAIN ZOOM
-        row.innerHTML = `
-            <td>${index + 1}</td>
-            <td onclick="openContentModal(${index})">${m.title}</td> <td class="text-center" onclick="openContentModal(${index})">${materiDone ? iconCheck : (m.materi_link ? iconOpen : iconX)}</td> <td class="text-center" onclick="openContentModal(${index})">${tugasIcon}</td> <td class="text-center" onclick="openContentModal(${index})">${ulanganIcon}</td> <td class="text-center" ${zoomClick}>${zoomIcon}</td> `;
-        materiListEl.appendChild(row);
-    });
-}
-
-        // --- BUKA MODAL KONTEN (Diperbarui) ---
+        // --- BUKA MODAL KONTEN ---
         window.openContentModal = function(index) {
             const m = currentMapelData[index];
             if (!m) return;
@@ -496,20 +489,13 @@ function generateMateriListTable(materiArr) {
             if (!m.ulangan_link) document.getElementById('ulangan-link').classList.add('disabled-link');
             else document.getElementById('ulangan-link').classList.remove('disabled-link');
 
-            // Kontrol tab Tugas dan Ulangan (sesuai logika lama)
-            const uniqueKey = sessionStorage.getItem('fullKelas') + "_" + currentMateriTitle;
-            const materiDone = sessionStorage.getItem(uniqueKey + "_materi_done") === 'true';
-            const tugasDone = sessionStorage.getItem(uniqueKey + "_tugas_done") === 'true';
-            
-            // Nonaktifkan tab Tugas/Ulangan jika link tidak ada
+            // Kontrol tab Tugas dan Ulangan
             document.getElementById('tugas-tab').disabled = !m.tugas_link;
             document.getElementById('ulangan-tab').disabled = !m.ulangan_link;
-
 
             const modal = new bootstrap.Modal(document.getElementById('contentModal'));
             modal.show();
             
-            // SECARA OTOMATIS TAMPILKAN MATERI (Tab pertama)
             const materiTab = new bootstrap.Tab(document.getElementById('materi-tab'));
             materiTab.show();
         }
@@ -588,7 +574,7 @@ function generateMateriListTable(materiArr) {
             sessionStorage.removeItem('absensiRowIndex');
         }
         
-        // --- FUNGSI FETCH LAPORAN SISWA (Mengganti fetchNilai sebelumnya) ---
+        // --- FUNGSI FETCH LAPORAN SISWA ---
         window.fetchLaporanSiswa = async function(username) {
             const absensiBodyEl = document.getElementById('laporan-absensi-body');
             const nilaiBodyEl = document.getElementById('laporan-nilai-body');
@@ -608,7 +594,6 @@ function generateMateriListTable(materiArr) {
                 const result = await response.json();
 
                 if (result.success) {
-                    
                     // 1. Render Absensi
                     if (result.absensi && result.absensi.length > 0) {
                         absensiBodyEl.innerHTML = result.absensi.map(record => `
@@ -640,120 +625,63 @@ function generateMateriListTable(materiArr) {
                     
                 } else {
                     absensiBodyEl.innerHTML = `<tr><td colspan="5" class="text-center alert alert-warning">${result.message}</td></tr>`;
-                    nilaiBodyEl.innerHTML = `<tr><td colspan="10" class="text-center alert alert-warning">${result.message}</td></tr>`;
+                    nilaiBodyEl.innerHTML = `<tr><td colspan="10" class="text-center text-muted">Gagal memuat data nilai.</td></tr>`;
                 }
 
             } catch (error) {
-                console.error('Error fetching laporan siswa:', error);
-                absensiBodyEl.innerHTML = `<tr><td colspan="5" class="text-center alert alert-danger">Gagal memuat laporan.</td></tr>`;
-                nilaiBodyEl.innerHTML = `<tr><td colspan="10" class="text-center alert alert-danger">Gagal memuat laporan.</td></tr>`;
+                console.error('Error fetching laporan:', error);
+                absensiBodyEl.innerHTML = `<tr><td colspan="5" class="text-center alert alert-danger">Terjadi kesalahan koneksi.</td></tr>`;
+                nilaiBodyEl.innerHTML = `<tr><td colspan="10" class="text-center alert alert-danger">Terjadi kesalahan koneksi.</td></tr>`;
             }
         }
 
-
-        // --- LOGIKA LOGIN UTAMA ---
-        loginForm.addEventListener('submit', async (e) => {
+        // --- INISIALISASI EVENT LISTENER LOGIN ---
+        loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            loginBtn.disabled = true;
             loginSpinner.style.display = 'inline-block';
+            loginBtn.disabled = true;
             loginAlert.style.display = 'none';
 
             try {
-                // 1. Coba Login
-                const response = await fetch(API_ENDPOINT, { 
-                    method: 'POST', 
-                    contentType: 'application/json', 
-                    body: JSON.stringify({ username, password }) 
+                const response = await fetch(API_ENDPOINT + '?func=doLogin', {
+                    method: 'POST',
+                    contentType: 'application/json',
+                    body: JSON.stringify({ username, password })
                 });
+                
                 const result = await response.json();
 
                 if (result.success) {
-                    loginAlert.className = 'alert alert-success';
-                    loginAlert.textContent = result.message;
-                    
-                    // 2. Absensi Masuk
-                    const rowIndex = await recordAbsensiMasuk(result.user, result.fullKelas);
-
-                    // 3. Tampilkan Dashboard
-                    setTimeout(() => { 
-                        showDashboard(
-                            result.user, 
-                            result.fullKelas, 
-                            result.paket, 
-                            result.kelas,
-                            result.nama,     
-                            result.noInduk,    
-                            rowIndex
-                        ); 
-                    }, 500);
+                    const rowIndex = await recordAbsensiMasuk(username, result.data.fullKelas);
+                    showDashboard(result.data.username, result.data.fullKelas, result.data.paket, result.data.kelas, result.data.nama, result.data.noInduk, rowIndex);
                 } else {
-                    loginAlert.className = 'alert alert-danger';
                     loginAlert.textContent = result.message;
+                    loginAlert.className = 'alert alert-danger mt-3';
                     loginAlert.style.display = 'block';
                 }
-                
+
             } catch (error) {
-                loginAlert.className = 'alert alert-danger';
-                loginAlert.textContent = 'Terjadi kesalahan koneksi atau konfigurasi API.';
+                console.error(error);
+                loginAlert.textContent = 'Terjadi kesalahan koneksi server.';
+                loginAlert.className = 'alert alert-danger mt-3';
                 loginAlert.style.display = 'block';
             } finally {
-                loginBtn.disabled = false;
                 loginSpinner.style.display = 'none';
+                loginBtn.disabled = false;
             }
         });
 
-        // --- LOGIKA LOGOUT & UNLOAD ---
-        logoutBtn.addEventListener('click', async () => {
-            await recordAbsensiKeluar(absensiRowIndex || sessionStorage.getItem('absensiRowIndex'));
+        logoutBtn.addEventListener('click', function() {
+            const rowIndex = sessionStorage.getItem('absensiRowIndex');
+            recordAbsensiKeluar(rowIndex); 
 
             sessionStorage.clear();
-            dashboardContainer.style.display = 'none';
-            loginWrapper.style.display = 'flex'; // Tampilkan kembali wrapper
-            loginContainer.style.display = 'block'; // Tampilkan kembali container
-            loginAlert.style.display = 'none';
-            loginForm.reset(); 
+            location.reload();
         });
 
-        window.addEventListener('beforeunload', function() {
-            const storedRowIndex = sessionStorage.getItem('absensiRowIndex');
-            if (storedRowIndex && loginTime !== 0) {
-                const durationMs = Date.now() - loginTime;
-                const durationMinutes = (durationMs / 60000).toFixed(2);
-                
-                const data = JSON.stringify({
-                    rowIndex: parseInt(storedRowIndex),
-                    durationMinutes: parseFloat(durationMinutes)
-                });
-
-                // Menggunakan navigator.sendBeacon untuk memastikan absen keluar terekam bahkan saat menutup tab
-                navigator.sendBeacon(API_ENDPOINT + '?func=doPostAbsensiKeluar', new Blob([data], { type: 'application/json' }));
-            }
-            sessionStorage.removeItem('absensiRowIndex');
-        });
-
-        // Cek Status Login Saat Memuat Halaman
-        window.onload = () => {
-            if (sessionStorage.getItem('loggedIn') === 'true') {
-                const user = sessionStorage.getItem('username');
-                const fullKelas = sessionStorage.getItem('fullKelas');
-                const paket = sessionStorage.getItem('paket');
-                const kelas = sessionStorage.getItem('kelas');
-                const namaLengkap = sessionStorage.getItem('namaLengkap'); 
-                const noInduk = sessionStorage.getItem('noInduk');     
-                const rowIndex = sessionStorage.getItem('absensiRowIndex');
-
-                // Sembunyikan login wrapper saat dashboard ditampilkan
-                loginWrapper.style.display = 'none'; 
-                
-                showDashboard(user, fullKelas, paket, kelas, namaLengkap, noInduk, rowIndex ? parseInt(rowIndex) : null);
-            } else {
-                // Tampilkan login wrapper jika belum login
-                loginWrapper.style.display = 'flex'; 
-            }
-        };
     </script>
 </body>
 </html>
