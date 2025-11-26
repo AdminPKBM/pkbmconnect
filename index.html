@@ -3,130 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PKBM Celah Cahaya - Belajar Online</title>
+    <title>PKBM Celah Cahaya - Portal Siswa</title>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* Modernisasi Warna dan Tema */
         :root { 
-            --primary-color: #007bff; /* Biru Primer */
-            --secondary-color: #6c757d;
-            --success-color: #28a745;
-            --info-color: #17a2b8;
-            --bg-light: #f4f7f6; /* Latar belakang lebih lembut */
-            --card-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Shadow yang lebih halus */
-            --wa-color: #25d366; /* Warna WA */
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --bg-light: #f8f9fa;
+            --card-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            --wa-color: #25d366;
         }
-        body { background-color: var(--bg-light); }
+
+        body { 
+            background-color: var(--bg-light); 
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+        }
         
-        /* 1. Responsif & Modern: Halaman Login */
+        /* --- 1. HALAMAN LOGIN MODERN --- */
         .login-wrapper {
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
+            /* Background Gradient Keren */
+            background: linear-gradient(135deg, #4361ee 0%, #4cc9f0 100%);
             padding: 20px;
         }
 
         #login-container { 
-            max-width: 400px; 
+            max-width: 420px; 
             width: 100%;
             padding: 40px; 
-            box-shadow: var(--card-shadow); 
-            border-radius: 12px; 
-            background-color: white; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2); 
+            border-radius: 20px; 
+            background-color: rgba(255, 255, 255, 0.95); 
+            backdrop-filter: blur(10px);
         }
 
-        /* 2. Header Dashboard Modern */
+        .form-control {
+            border-radius: 10px;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            background-color: #f8f9fa;
+        }
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        /* --- 2. HEADER DASHBOARD --- */
         .header { 
-            background-color: var(--primary-color); 
-            color: white; 
+            background: white;
             padding: 15px 0; 
-            margin-bottom: 25px; 
-            box-shadow: 0 3px 6px rgba(0,0,0,0.15); 
+            margin-bottom: 30px; 
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
         .header h3 { 
             font-weight: 700; 
-            letter-spacing: 0.5px;
+            color: var(--primary-color);
+            margin: 0;
         }
 
-        /* 3. Kartu Dashboard (Paket & Kelas) */
-        .card {
-            border-radius: 10px;
+        /* --- 3. KARTU INFORMASI (Cards) --- */
+        .info-card {
+            border-radius: 15px;
             border: none;
             box-shadow: var(--card-shadow);
-            transition: transform 0.2s;
+            transition: transform 0.3s ease;
+            overflow: hidden;
+            color: white;
+            height: 100%;
         }
-        .card:hover {
-            transform: translateY(-3px);
+        .info-card:hover {
+            transform: translateY(-5px);
         }
-        .card-body h1 {
-            margin-top: 10px;
-        }
+        /* Gradient untuk kartu */
+        .card-paket { background: linear-gradient(45deg, #4361ee, #4895ef); }
+        .card-kelas { background: linear-gradient(45deg, #06d6a0, #118ab2); }
         
-        /* 4. Tabel Mata Pelajaran */
-        .table-mapel {
-            border-radius: 8px;
-            overflow: hidden; 
+        .card-body h5 { font-size: 1rem; opacity: 0.9; }
+        .card-body h1 { font-size: 2.5rem; font-weight: 700; }
+
+        /* --- 4. TABEL --- */
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 5px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
         }
         .table-mapel thead {
-            background-color: var(--primary-color); 
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+        .table-mapel th {
+            font-weight: 600;
+            border: none;
+            padding: 15px;
+        }
+        .table-mapel td {
+            padding: 15px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .table-mapel tbody tr:last-child td { border-bottom: none; }
+        .table-mapel tbody tr:hover { background-color: #f8fafc; }
+
+        .status-indicator { font-size: 1.3em; transition: transform 0.2s; }
+        .status-indicator:hover { transform: scale(1.2); }
+
+        /* --- 5. MODAL --- */
+        .modal-content {
+            border-radius: 15px;
+            border: none;
+            overflow: hidden;
+        }
+        .modal-header {
+            background: var(--primary-color);
             color: white;
         }
-        .table-mapel tbody tr { 
-            transition: background-color 0.2s;
-        }
-        .table-mapel tbody tr:hover { 
-            background-color: #e9ecef !important; 
-        }
-        .status-indicator { 
-            font-size: 1.2em; 
-        }
-
-        /* 5. Modal Konten - Responsif Penuh */
-        .modal.fade .modal-dialog {
-            transition: transform 0.3s ease-out;
-            transform: translate(0, -50px);
-        }
-        @media (max-width: 576px) {
-            .modal-dialog {
-                margin: 0;
-                min-height: 100vh;
-            }
-            .modal-content {
-                min-height: 100vh;
-                border-radius: 0;
-            }
-        }
-        .modal-body {
-            display: flex; 
-            flex-direction: column;
-            padding: 0;
-        }
-        .modal-body .tab-content { 
-            flex-grow: 1; 
-            height: 100%; 
-        }
-        .modal-body iframe { 
-            width: 100%; 
-            height: 100%; 
-            min-height: 80vh; 
-            border: none;
-        }
-
-        .modal-body .nav-tabs {
-            padding: 0 1rem;
-        }
         
-        /* Utility */
-        .disabled-link { 
-            cursor: not-allowed; 
-            opacity: 0.5; 
-            pointer-events: none; 
-        }
-
-        /* --- TOMBOL WHATSAPP MELAYANG --- */
+        /* --- 6. TOMBOL WA --- */
         .float-wa {
             position: fixed;
             width: 60px;
@@ -135,200 +154,179 @@
             right: 30px;
             background-color: var(--wa-color);
             color: #FFF;
-            border-radius: 50px;
+            border-radius: 50%;
             text-align: center;
             font-size: 30px;
-            box-shadow: 2px 2px 3px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             z-index: 9999;
             display: flex;
             align-items: center;
             justify-content: center;
             text-decoration: none;
             transition: all 0.3s ease;
+            animation: pulse 2s infinite;
         }
-
         .float-wa:hover {
             background-color: #128C7E;
             color: white;
             transform: scale(1.1);
-            box-shadow: 2px 4px 6px rgba(0,0,0,0.3);
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
         }
 
-        .my-float {
-            margin-top: 1px;
+        /* --- Utility Classes --- */
+        .fw-medium { font-weight: 500; }
+        .text-xs { font-size: 0.85rem; }
+        .disabled-link { 
+            cursor: not-allowed; opacity: 0.4; pointer-events: none; filter: grayscale(100%);
         }
     </style>
 </head>
 <body>
 
-    <div class="login-wrapper" id="login-wrapper" style="display: block;">
+    <div class="login-wrapper" id="login-wrapper">
         <div id="login-container">
-            <h2 class="text-center mb-2 text-primary fw-bold"><i class="fas fa-user-graduate me-2"></i> PKBM Celah Cahaya</h2>
-            <p class="text-center mb-4 text-secondary">Portal Belajar Online Warga Belajar</p>
+            <div class="text-center mb-4">
+                <i class="fas fa-graduation-cap fa-3x text-primary mb-3"></i>
+                <h3 class="fw-bold text-dark">PKBM Celah Cahaya</h3>
+                <p class="text-muted">Portal Belajar Online</p>
+            </div>
+            
             <form id="login-form">
                 <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-user"></i></span>
-                        <input type="text" class="form-control form-control-lg" id="username" required>
-                    </div>
+                    <label class="form-label text-xs text-uppercase fw-bold text-secondary ps-1">Username</label>
+                    <input type="text" class="form-control" id="username" placeholder="Masukkan username" required>
                 </div>
                 <div class="mb-4">
-                    <label for="password" class="form-label">Password</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                        <input type="password" class="form-control form-control-lg" id="password" required>
-                    </div>
+                    <label class="form-label text-xs text-uppercase fw-bold text-secondary ps-1">Password</label>
+                    <input type="password" class="form-control" id="password" placeholder="Masukkan password" required>
                 </div>
-                <button type="submit" class="btn btn-primary btn-lg w-100" id="login-btn">
+                <button type="submit" class="btn btn-primary w-100 mb-3" id="login-btn">
                     <span id="login-spinner" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" style="display:none;"></span>
-                    MASUK
+                    MASUK SEKARANG
                 </button>
-                <div id="login-alert" class="alert mt-3 text-center" style="display:none;"></div>
+                <div id="login-alert" class="alert mt-3 text-center py-2 text-xs" style="display:none;"></div>
             </form>
         </div>
     </div>
 
-    <div id="dashboard-container" class="container-fluid p-0" style="display: none;">
+    <div id="dashboard-container" style="display: none;">
         <header class="header">
-            <div class="container-fluid d-flex justify-content-between align-items-center flex-wrap">
-                <h3 class="mb-2 mb-md-0">PKBM Celah Cahaya</h3>
-                <div class="d-flex flex-column flex-md-row align-items-md-center">
-                    <div class="d-flex align-items-center mb-2 mb-md-0 me-md-3">
-                        <i class="fas fa-user-circle me-2 text-white-50 fs-4 d-none d-md-block"></i>
-                        <span class="text-white small me-1">Selamat datang, </span>
-                        <span id="user-display" class="me-2 fw-bold text-warning"></span>
-                        <span id="user-nama" class="me-2 text-white small d-none d-lg-inline"></span>
-                        <span id="user-noinduk" class="text-white small d-none d-lg-inline"></span>
+            <div class="container d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-book-reader text-primary fs-3 me-2"></i>
+                    <h4 class="mb-0 fw-bold d-none d-md-block">PKBM Celah Cahaya</h4>
+                    <h4 class="mb-0 fw-bold d-block d-md-none">PKBM</h4>
+                </div>
+                <div class="d-flex align-items-center bg-light px-3 py-2 rounded-pill">
+                    <i class="fas fa-user-circle text-secondary fs-4 me-2"></i>
+                    <div class="d-flex flex-column me-3" style="line-height: 1.2;">
+                        <span id="user-display" class="fw-bold text-dark text-xs">Siswa</span>
+                        <span id="user-nama" class="text-muted text-xs d-none d-md-block">Nama Lengkap</span>
                     </div>
-                    <button class="btn btn-sm btn-light" id="logout-btn"><i class="fas fa-sign-out-alt me-1"></i> Logout</button>
+                    <button class="btn btn-sm btn-outline-danger rounded-circle" id="logout-btn" title="Keluar"><i class="fas fa-power-off"></i></button>
                 </div>
             </div>
         </header>
 
         <div class="container pb-5">
-            <div class="row mb-5 gy-4">
-                <div class="col-lg-6">
-                    <div class="card shadow-lg border-start border-primary border-5 h-100">
-                        <div class="card-body">
-                            <h5 class="card-title text-primary"><i class="fas fa-box me-2"></i> Paket Belajar</h5>
-                            <h1 id="user-paket" class="display-4 fw-bold"></h1>
+            <div class="row mb-5 gy-3">
+                <div class="col-md-6">
+                    <div class="card info-card card-paket">
+                        <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5><i class="fas fa-box me-2"></i> Paket Belajar</h5>
+                                <h1 id="user-paket" class="mb-0">...</h1>
+                            </div>
+                            <i class="fas fa-cubes fa-4x text-white-50"></i>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <div class="card shadow-lg border-start border-success border-5 h-100">
-                        <div class="card-body">
-                            <h5 class="card-title text-success"><i class="fas fa-school me-2"></i> Kelas</h5>
-                            <h1 id="user-kelas" class="display-4 fw-bold"></h1>
+                <div class="col-md-6">
+                    <div class="card info-card card-kelas">
+                        <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5><i class="fas fa-layer-group me-2"></i> Kelas</h5>
+                                <h1 id="user-kelas" class="mb-0">...</h1>
+                            </div>
+                            <i class="fas fa-chalkboard fa-4x text-white-50"></i>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <h4 class="mb-4 text-secondary"><i class="fas fa-chalkboard-teacher me-2"></i> Akses Materi Pembelajaran</h4>
+            <div class="d-flex justify-content-between align-items-end mb-3">
+                <h5 class="fw-bold text-dark mb-0"><i class="fas fa-book me-2 text-primary"></i> Materi Pembelajaran</h5>
+                <small class="text-muted">Klik mapel untuk detail</small>
+            </div>
             
-            <div class="table-responsive">
-                <table class="table table-hover table-mapel">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Mata Pelajaran</th>
-                            <th class="text-center">Materi</th>
-                            <th class="text-center">Tugas</th>
-                            <th class="text-center">Ulangan</th>
-                            <th class="text-center">Link Zoom</th> 
-                        </tr>
-                    </thead>
-                    <tbody id="materi-list">
-                        <tr><td colspan="6" class="text-center text-muted">Memuat data mata pelajaran...</td></tr>
-                    </tbody>
-                </table>
+            <div class="table-container">
+                <div class="table-responsive">
+                    <table class="table table-mapel mb-0">
+                        <thead>
+                            <tr>
+                                <th width="5%">No</th>
+                                <th>Mata Pelajaran</th>
+                                <th class="text-center" width="10%">Materi</th>
+                                <th class="text-center" width="10%">Tugas</th>
+                                <th class="text-center" width="10%">Ulangan</th>
+                                <th class="text-center" width="10%">Zoom</th> 
+                            </tr>
+                        </thead>
+                        <tbody id="materi-list">
+                            <tr><td colspan="6" class="text-center py-5 text-muted"><i class="fas fa-spinner fa-spin me-2"></i> Memuat data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            <hr class="my-5">
+            <hr class="my-5 border-light">
 
-            <h4 class="mb-4 text-primary"><i class="fas fa-file-alt me-2"></i> Laporan Siswa</h4>
+            <h5 class="fw-bold text-dark mb-3"><i class="fas fa-chart-line me-2 text-primary"></i> Laporan Akademik</h5>
 
-            <ul class="nav nav-pills mb-3" id="laporanTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="laporan-absensi-tab" data-bs-toggle="pill" data-bs-target="#laporan-absensi" type="button" role="tab" onclick="fetchLaporanSiswa(sessionStorage.getItem('username'))"><i class="fas fa-clock me-1"></i> Rekap Absensi</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="laporan-nilai-tab" data-bs-toggle="pill" data-bs-target="#laporan-nilai" type="button" role="tab" onclick="fetchLaporanSiswa(sessionStorage.getItem('username'))"><i class="fas fa-graduation-cap me-1"></i> Rekap Nilai</button>
-                </li>
-            </ul>
-            
-            <div class="tab-content card p-3 shadow-sm" id="laporanTabsContent">
-                <div class="tab-pane fade show active" id="laporan-absensi" role="tabpanel">
-                    <div class="table-responsive">
-                        <table class="table table-striped table-bordered">
-                            <thead class="table-info">
-                                <tr>
-                                    <th>Tanggal</th>
-                                    <th>Kelas</th>
-                                    <th>Waktu Masuk</th>
-                                    <th>Waktu Keluar</th>
-                                    <th>Durasi (Menit)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="laporan-absensi-body">
-                                <tr><td colspan="5" class="text-center text-muted">Memuat data...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <div class="tab-pane fade" id="laporan-nilai" role="tabpanel">
-                     <div class="table-responsive">
-                         <table class="table table-striped table-bordered">
-                             <thead class="table-success" id="laporan-nilai-header">
-                                 <tr><th>Memuat Data...</th></tr>
-                             </thead>
-                             <tbody id="laporan-nilai-body">
-                                 <tr><td colspan="10" class="text-center text-muted">Memuat data...</td></tr>
-                             </tbody>
-                         </table>
-                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="contentModal" tabindex="-1" aria-labelledby="contentModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-fullscreen-sm-down modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white p-3">
-                    <h5 class="modal-title fs-5" id="contentModalLabel"></h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <ul class="nav nav-tabs sticky-top bg-white pt-2" id="contentTabs" role="tablist">
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-white p-2 border-bottom-0">
+                    <ul class="nav nav-pills nav-fill" id="laporanTabs" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="materi-tab" data-bs-toggle="tab" data-bs-target="#materi-pane" type="button" role="tab"><i class="fas fa-book-open me-1"></i> Materi Bacaan</button>
+                            <button class="nav-link active rounded-pill fw-medium" id="laporan-absensi-tab" data-bs-toggle="pill" data-bs-target="#laporan-absensi" type="button" role="tab" onclick="fetchLaporanSiswa(sessionStorage.getItem('username'))">
+                                <i class="fas fa-clock me-1"></i> Rekap Absensi
+                            </button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="tugas-tab" data-bs-toggle="tab" data-bs-target="#tugas-pane" type="button" role="tab"><i class="fas fa-clipboard-list me-1"></i> Tugas</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="ulangan-tab" data-bs-toggle="tab" data-bs-target="#ulangan-pane" type="button" role="tab"><i class="fas fa-pencil-alt me-1"></i> Ulangan</button>
+                            <button class="nav-link rounded-pill fw-medium" id="laporan-nilai-tab" data-bs-toggle="pill" data-bs-target="#laporan-nilai" type="button" role="tab" onclick="fetchLaporanSiswa(sessionStorage.getItem('username'))">
+                                <i class="fas fa-star me-1"></i> Rekap Nilai
+                            </button>
                         </li>
                     </ul>
-                    <div class="tab-content flex-grow-1" id="contentTabsContent">
-                        <div class="tab-pane fade show active h-100" id="materi-pane" role="tabpanel" tabindex="0">
-                            <iframe id="materi-iframe" src="" frameborder="0" allowfullscreen></iframe>
-                        </div>
-                        <div class="tab-pane fade h-100" id="tugas-pane" role="tabpanel" tabindex="0">
-                            <div class="p-3 bg-light border-bottom">
-                                <a id="tugas-link" href="#" target="_blank" class="btn btn-warning w-100 w-md-auto"><i class="fas fa-external-link-alt me-1"></i> Buka Formulir Tugas (Jendela Baru)</a>
+                </div>
+                <div class="card-body bg-light">
+                    <div class="tab-content" id="laporanTabsContent">
+                        <div class="tab-pane fade show active" id="laporan-absensi" role="tabpanel">
+                            <div class="table-responsive bg-white rounded-3 shadow-sm p-2">
+                                <table class="table table-hover mb-0">
+                                    <thead class="table-light">
+                                        <tr><th>Tanggal</th><th>Kelas</th><th>Masuk</th><th>Keluar</th><th>Durasi</th></tr>
+                                    </thead>
+                                    <tbody id="laporan-absensi-body">
+                                        <tr><td colspan="5" class="text-center text-muted py-3">Pilih tab untuk memuat data.</td></tr>
+                                    </tbody>
+                                </table>
                             </div>
-                            <iframe id="tugas-iframe" src="" frameborder="0" allowfullscreen></iframe>
                         </div>
-                        <div class="tab-pane fade h-100" id="ulangan-pane" role="tabpanel" tabindex="0">
-                            <div class="p-3 bg-light border-bottom">
-                                <a id="ulangan-link" href="#" target="_blank" class="btn btn-danger w-100 w-md-auto"><i class="fas fa-external-link-alt me-1"></i> Buka Formulir Ulangan (Jendela Baru)</a>
-                            </div>
-                            <iframe id="ulangan-iframe" src="" frameborder="0" allowfullscreen></iframe>
+                        <div class="tab-pane fade" id="laporan-nilai" role="tabpanel">
+                             <div class="table-responsive bg-white rounded-3 shadow-sm p-2">
+                                 <table class="table table-hover mb-0">
+                                     <thead class="table-light" id="laporan-nilai-header">
+                                         <tr><th>Memuat Data...</th></tr>
+                                     </thead>
+                                     <tbody id="laporan-nilai-body">
+                                         <tr><td colspan="10" class="text-center text-muted py-3">Memuat data...</td></tr>
+                                     </tbody>
+                                 </table>
+                             </div>
                         </div>
                     </div>
                 </div>
@@ -336,18 +334,45 @@
         </div>
     </div>
 
-    <a href="https://wa.me/6282119362454?text=Halo%20Admin%20PKBM%20Celah%20Cahaya,%20saya%20butuh%20bantuan." class="float-wa" target="_blank" title="Hubungi Admin via WhatsApp">
+    <div class="modal fade" id="contentModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-fullscreen-sm-down modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="contentModalLabel"><i class="fas fa-book-open me-2"></i> Detail Pelajaran</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body bg-light">
+                    <ul class="nav nav-tabs sticky-top bg-white px-3 pt-3 shadow-sm mb-3" id="contentTabs" role="tablist">
+                        <li class="nav-item"><button class="nav-link active" id="materi-tab" data-bs-toggle="tab" data-bs-target="#materi-pane" type="button"><i class="fas fa-book-reader me-1"></i> Materi</button></li>
+                        <li class="nav-item"><button class="nav-link" id="tugas-tab" data-bs-toggle="tab" data-bs-target="#tugas-pane" type="button"><i class="fas fa-tasks me-1"></i> Tugas</button></li>
+                        <li class="nav-item"><button class="nav-link" id="ulangan-tab" data-bs-toggle="tab" data-bs-target="#ulangan-pane" type="button"><i class="fas fa-edit me-1"></i> Ulangan</button></li>
+                    </ul>
+                    <div class="tab-content flex-grow-1 bg-white mx-3 mb-3 rounded-3 shadow-sm overflow-hidden" style="min-height: 500px;">
+                        <div class="tab-pane fade show active h-100" id="materi-pane"><iframe id="materi-iframe" src=""></iframe></div>
+                        <div class="tab-pane fade h-100" id="tugas-pane">
+                            <div class="p-2 bg-warning bg-opacity-10 border-bottom text-center">
+                                <a id="tugas-link" href="#" target="_blank" class="btn btn-sm btn-warning"><i class="fas fa-external-link-alt me-1"></i> Buka di Tab Baru</a>
+                            </div>
+                            <iframe id="tugas-iframe" src=""></iframe>
+                        </div>
+                        <div class="tab-pane fade h-100" id="ulangan-pane">
+                            <div class="p-2 bg-danger bg-opacity-10 border-bottom text-center">
+                                <a id="ulangan-link" href="#" target="_blank" class="btn btn-sm btn-danger"><i class="fas fa-external-link-alt me-1"></i> Buka di Tab Baru</a>
+                            </div>
+                            <iframe id="ulangan-iframe" src=""></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="https://wa.me/6282119362454?text=Halo%20Admin%20PKBM%20Celah%20Cahaya,%20saya%20butuh%20bantuan." class="float-wa" target="_blank" title="Chat Admin">
         <i class="fab fa-whatsapp my-float"></i>
     </a>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        /** JavaScript Logic (FINAL VERSION - Zoom Fix & Complete Code) **/
-
-        // ==============================================================================
-        //  PENTING: GANTI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
-        // ==============================================================================
         const API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzC0yVKN4IunAF1vxTEFBxNQ487yBINHJ2XScYYX2TTnmmpZ-MVBPTQt7URLFTFUh0u/exec'; 
         
         let loginTime = 0; 
@@ -359,319 +384,196 @@
         const loginBtn = document.getElementById('login-btn');
         const loginSpinner = document.getElementById('login-spinner');
         const loginAlert = document.getElementById('login-alert');
-        const loginContainer = document.getElementById('login-container');
         const loginWrapper = document.getElementById('login-wrapper'); 
         const dashboardContainer = document.getElementById('dashboard-container');
-        const userPaketEl = document.getElementById('user-paket');
-        const userKelasEl = document.getElementById('user-kelas'); 
-        const userDisplayEl = document.getElementById('user-display');
-        const userNamaEl = document.getElementById('user-nama'); 
-        const userNoIndukEl = document.getElementById('user-noinduk'); 
-        const materiListEl = document.getElementById('materi-list');
-        const logoutBtn = document.getElementById('logout-btn');
-        const contentTabsEl = document.getElementById('contentTabs');
-
-        // --- FUNGSI UTILITY ---
+        
+        // --- UTILITY ---
         function getIframeUrl(link) {
             if (!link) return '';
-            if (link.includes('/file/d/') && link.includes('/view')) {
-                return link.replace('/view', '/preview');
-            }
-            if (link.includes('docs.google.com/forms/')) {
-                return link.includes('embedded=true') ? link : link + '?embedded=true';
-            }
+            if (link.includes('/file/d/') && link.includes('/view')) return link.replace('/view', '/preview');
+            if (link.includes('docs.google.com/forms/')) return link.includes('embedded=true') ? link : link + '?embedded=true';
             return link;
         }
 
-        // --- TAMPILAN DASHBOARD ---
+        // --- DASHBOARD LOGIC ---
         function showDashboard(username, fullKelas, paket, kelas, namaLengkap, noInduk, rowIndex = null) {
-            userPaketEl.textContent = paket;
-            userKelasEl.textContent = kelas;
-            userDisplayEl.textContent = `${username}!`; 
-            userNamaEl.textContent = `(${namaLengkap})`; 
-            userNoIndukEl.textContent = `No. Induk: ${noInduk}`; 
+            document.getElementById('user-paket').textContent = paket;
+            document.getElementById('user-kelas').textContent = kelas;
+            document.getElementById('user-display').textContent = username; 
+            document.getElementById('user-nama').textContent = namaLengkap; 
             
             loginWrapper.style.display = 'none'; 
-            loginContainer.style.display = 'none'; 
             dashboardContainer.style.display = 'block';
             
-            // Absensi & Sesi
             loginTime = Date.now();
             absensiRowIndex = rowIndex;
 
             sessionStorage.setItem('loggedIn', 'true');
             sessionStorage.setItem('username', username);
             sessionStorage.setItem('fullKelas', fullKelas);
-            sessionStorage.setItem('paket', paket);
-            sessionStorage.setItem('kelas', kelas);
-            sessionStorage.setItem('namaLengkap', namaLengkap); 
-            sessionStorage.setItem('noInduk', noInduk);       
-            if (rowIndex) {
-                sessionStorage.setItem('absensiRowIndex', rowIndex);
-            }
+            if (rowIndex) sessionStorage.setItem('absensiRowIndex', rowIndex);
             
             fetchMataPelajaran(fullKelas); 
         }
 
-        // --- FUNGSI AMBIL MATA PELAJARAN ---
         async function fetchMataPelajaran(fullKelas) {
-            materiListEl.innerHTML = `<tr><td colspan="6" class="text-center text-muted">Mengambil data mata pelajaran untuk ${fullKelas}...</td></tr>`;
+            const listEl = document.getElementById('materi-list');
+            listEl.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-muted"><i class="fas fa-circle-notch fa-spin me-2"></i> Memuat mata pelajaran...</td></tr>`;
             
             try {
                 const response = await fetch(API_ENDPOINT + '?func=doPostMapel', { 
-                    method: 'POST',
-                    contentType: 'application/json',
-                    body: JSON.stringify({ fullKelas: fullKelas })
+                    method: 'POST', body: JSON.stringify({ fullKelas: fullKelas })
                 });
-                
                 const result = await response.json();
 
                 if (result.success && result.mapel.length > 0) {
                     currentMapelData = result.mapel; 
                     generateMateriListTable(currentMapelData);
                 } else {
-                    materiListEl.innerHTML = `<tr><td colspan="6" class="text-center alert alert-warning">${result.message || 'Gagal memuat mata pelajaran.'}</td></tr>`;
+                    listEl.innerHTML = `<tr><td colspan="6" class="text-center text-warning fw-bold">Belum ada mata pelajaran untuk kelas ini.</td></tr>`;
                 }
-
             } catch (error) {
-                console.error('Error fetching mata pelajaran:', error);
-                materiListEl.innerHTML = `<tr><td colspan="6" class="text-center alert alert-danger">Gagal memuat data mata pelajaran. Periksa koneksi API Anda.</td></tr>`;
+                console.error(error);
+                listEl.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Gagal koneksi ke server.</td></tr>`;
             }
         }
         
-        // --- GENERATE DAFTAR MATERI (TABEL) - DENGAN PERBAIKAN ZOOM ---
         function generateMateriListTable(materiArr) {
-            materiListEl.innerHTML = '';
+            const listEl = document.getElementById('materi-list');
+            listEl.innerHTML = '';
             
             materiArr.forEach((m, index) => {
                 const uniqueKey = sessionStorage.getItem('fullKelas') + "_" + m.title;
                 const materiDone = sessionStorage.getItem(uniqueKey + "_materi_done") === 'true';
                 const tugasDone = sessionStorage.getItem(uniqueKey + "_tugas_done") === 'true';
 
-                // Definisi Ikon
                 const iconCheck = '<i class="fas fa-check-circle text-success status-indicator"></i>';
-                const iconX = '<i class="fas fa-times-circle text-danger status-indicator"></i>';
-                const iconOpen = '<i class="fas fa-arrow-alt-circle-right text-primary status-indicator"></i>';
+                const iconLock = '<i class="fas fa-lock text-muted opacity-50"></i>';
+                const iconOpen = '<i class="fas fa-play-circle text-primary status-indicator"></i>';
                 const iconZoom = '<i class="fas fa-video text-info status-indicator"></i>'; 
                 
-                const row = document.createElement('tr');
-                row.setAttribute('data-mapel-index', index);
+                let ulanganIcon = (!m.ulangan_link) ? '-' : (tugasDone ? iconOpen : iconLock);
+                let tugasIcon = (!m.tugas_link) ? '-' : (materiDone ? (tugasDone ? iconCheck : iconOpen) : iconLock);
+                let materiIcon = (materiDone ? iconCheck : (m.materi_link ? iconOpen : iconLock));
                 
-                // Ikon Ulangan
-                let ulanganIcon = iconX;
-                if (tugasDone && m.ulangan_link) {
-                    ulanganIcon = iconOpen;
-                } else if (tugasDone && !m.ulangan_link) {
-                    ulanganIcon = '<i class="fas fa-minus-circle text-secondary status-indicator"></i>'; 
+                // Zoom Logic
+                let zoomCell = `<td class="text-center text-muted">-</td>`;
+                if (m.zoom_link && m.zoom_link.length > 5) {
+                    zoomCell = `<td class="text-center" style="cursor:pointer" onclick="event.stopPropagation(); window.open('${m.zoom_link}', '_blank')">${iconZoom}</td>`;
                 }
 
-                // Ikon Tugas
-                let tugasIcon = iconX;
-                if (materiDone && m.tugas_link) {
-                    tugasIcon = iconOpen;
-                } else if (materiDone && !m.tugas_link) {
-                    tugasIcon = '<i class="fas fa-minus-circle text-secondary status-indicator"></i>';
-                } else if (tugasDone) {
-                    tugasIcon = iconCheck;
-                }
-
-                // LOGIKA ZOOM (FIX)
-                let zoomCellHtml = '';
-                if (m.zoom_link && m.zoom_link.trim() !== "") {
-                    // event.stopPropagation() mencegah modal terbuka saat klik zoom
-                    zoomCellHtml = `<td class="text-center" style="cursor: pointer;" onclick="event.stopPropagation(); window.open('${m.zoom_link}', '_blank');">${iconZoom}</td>`;
-                } else {
-                    zoomCellHtml = `<td class="text-center text-muted" style="cursor: default;">${iconX}</td>`;
-                }
-
-                // Render Baris
+                const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td onclick="openContentModal(${index})" style="cursor: pointer;">${m.title}</td> 
-                    <td class="text-center" onclick="openContentModal(${index})" style="cursor: pointer;">${materiDone ? iconCheck : (m.materi_link ? iconOpen : iconX)}</td> 
+                    <td class="fw-bold text-muted">${index + 1}</td>
+                    <td class="fw-medium text-dark" onclick="openContentModal(${index})" style="cursor: pointer;">${m.title}</td> 
+                    <td class="text-center" onclick="openContentModal(${index})" style="cursor: pointer;">${materiIcon}</td> 
                     <td class="text-center" onclick="openContentModal(${index})" style="cursor: pointer;">${tugasIcon}</td> 
                     <td class="text-center" onclick="openContentModal(${index})" style="cursor: pointer;">${ulanganIcon}</td> 
-                    ${zoomCellHtml} 
+                    ${zoomCell} 
                 `;
-                materiListEl.appendChild(row);
+                listEl.appendChild(row);
             });
         }
 
-        // --- BUKA MODAL KONTEN ---
         window.openContentModal = function(index) {
             const m = currentMapelData[index];
             if (!m) return;
-
             currentMateriTitle = m.title;
-            document.getElementById('contentModalLabel').textContent = m.title;
+            document.getElementById('contentModalLabel').innerHTML = `<i class="fas fa-book me-2"></i> ${m.title}`;
             
-            const materiLink = getIframeUrl(m.materi_link);
-            const tugasLink = getIframeUrl(m.tugas_link);
-            const ulanganLink = getIframeUrl(m.ulangan_link);
-
-            // Set iframe sources
-            document.getElementById('materi-iframe').src = materiLink;
-            document.getElementById('tugas-iframe').src = tugasLink;
-            document.getElementById('ulangan-iframe').src = ulanganLink;
+            document.getElementById('materi-iframe').src = getIframeUrl(m.materi_link);
+            document.getElementById('tugas-iframe').src = getIframeUrl(m.tugas_link);
+            document.getElementById('ulangan-iframe').src = getIframeUrl(m.ulangan_link);
             
-            // Set external links
-            document.getElementById('tugas-link').href = m.tugas_link || '#';
-            document.getElementById('ulangan-link').href = m.ulangan_link || '#';
+            const btnTugas = document.getElementById('tugas-link');
+            const btnUlangan = document.getElementById('ulangan-link');
             
-            // Toggle disabled link classes
-            if (!m.tugas_link) document.getElementById('tugas-link').classList.add('disabled-link');
-            else document.getElementById('tugas-link').classList.remove('disabled-link');
-
-            if (!m.ulangan_link) document.getElementById('ulangan-link').classList.add('disabled-link');
-            else document.getElementById('ulangan-link').classList.remove('disabled-link');
-
-            // Kontrol tab Tugas dan Ulangan
-            document.getElementById('tugas-tab').disabled = !m.tugas_link;
-            document.getElementById('ulangan-tab').disabled = !m.ulangan_link;
+            btnTugas.href = m.tugas_link || '#';
+            btnUlangan.href = m.ulangan_link || '#';
+            
+            // Disable Logic
+            document.getElementById('tugas-tab').classList.toggle('disabled', !m.tugas_link);
+            document.getElementById('ulangan-tab').classList.toggle('disabled', !m.ulangan_link);
 
             const modal = new bootstrap.Modal(document.getElementById('contentModal'));
             modal.show();
             
-            const materiTab = new bootstrap.Tab(document.getElementById('materi-tab'));
-            materiTab.show();
+            // Auto open materi tab
+            new bootstrap.Tab(document.getElementById('materi-tab')).show();
         }
 
-        // --- LOGIKA FLOW KONTROL & UPDATE STATUS ---
-        contentTabsEl.addEventListener('show.bs.tab', function (event) {
-            const targetTab = event.target.id;
-            const uniqueKey = sessionStorage.getItem('fullKelas') + "_" + currentMateriTitle;
-            const materiKey = uniqueKey + "_materi_done";
-            const tugasKey = uniqueKey + "_tugas_done";
-
-            if (targetTab === 'tugas-tab') {
-                if (sessionStorage.getItem(materiKey) !== 'true') {
-                    event.preventDefault(); 
-                    alert("Anda harus mengakses 'Materi Bacaan' terlebih dahulu sebelum mengerjakan Tugas.");
-                }
-            } else if (targetTab === 'ulangan-tab') {
-                if (sessionStorage.getItem(tugasKey) !== 'true') {
-                    event.preventDefault(); 
-                    alert("Anda harus menyelesaikan 'Tugas' terlebih dahulu sebelum mengakses Ulangan.");
-                }
-            }
+        // Tab Logic & Unlock System
+        document.getElementById('materi-tab').addEventListener('shown.bs.tab', () => {
+             const key = sessionStorage.getItem('fullKelas') + "_" + currentMateriTitle + "_materi_done";
+             sessionStorage.setItem(key, 'true');
+             generateMateriListTable(currentMapelData);
         });
         
-        document.getElementById('materi-tab').addEventListener('shown.bs.tab', function () {
-            const uniqueKey = sessionStorage.getItem('fullKelas') + "_" + currentMateriTitle;
-            sessionStorage.setItem(uniqueKey + "_materi_done", 'true');
-            generateMateriListTable(currentMapelData); 
-        });
-        
-        document.getElementById('tugas-tab').addEventListener('shown.bs.tab', function () {
-            const uniqueKey = sessionStorage.getItem('fullKelas') + "_" + currentMateriTitle;
-            sessionStorage.setItem(uniqueKey + "_tugas_done", 'true');
-            generateMateriListTable(currentMapelData); 
-        });
-
-        // --- ABSENSI HANDLERS ---
-        async function recordAbsensiMasuk(username, fullKelas) {
-            try {
-                const response = await fetch(API_ENDPOINT + '?func=doPostAbsensiMasuk', {
-                    method: 'POST',
-                    contentType: 'application/json',
-                    body: JSON.stringify({ username, fullKelas })
-                });
-                const result = await response.json();
-                return result.success ? result.rowIndex : null;
-            } catch (error) {
-                console.error('Error saat mencatat absen masuk:', error);
-                return null;
-            }
-        }
-
-        async function recordAbsensiKeluar(rowIndex) {
-            if (!rowIndex || loginTime === 0) return; 
-
-            const durationMs = Date.now() - loginTime;
-            const durationMinutes = (durationMs / 60000).toFixed(2); 
-
-            try {
-                const response = await fetch(API_ENDPOINT + '?func=doPostAbsensiKeluar', {
-                    method: 'POST',
-                    contentType: 'application/json',
-                    body: JSON.stringify({ rowIndex: rowIndex, durationMinutes: parseFloat(durationMinutes) })
-                });
-
-                const result = await response.json();
-                if (!result.success) {
-                    console.error('Gagal mencatat absen keluar:', result.message);
-                }
-            } catch (error) {
-                console.error('Error saat mencatat absen keluar:', error);
-            }
+        document.getElementById('contentTabs').addEventListener('show.bs.tab', (e) => {
+            const target = e.target.id;
+            const baseKey = sessionStorage.getItem('fullKelas') + "_" + currentMateriTitle;
             
-            loginTime = 0;
-            absensiRowIndex = null;
-            sessionStorage.removeItem('absensiRowIndex');
-        }
-        
-        // --- FUNGSI FETCH LAPORAN SISWA ---
+            if (target === 'tugas-tab' && sessionStorage.getItem(baseKey + "_materi_done") !== 'true') {
+                e.preventDefault(); alert('Baca materi dulu!');
+            }
+            if (target === 'ulangan-tab' && sessionStorage.getItem(baseKey + "_tugas_done") !== 'true') {
+                e.preventDefault(); alert('Kerjakan tugas dulu!');
+            }
+            // Jika buka tugas, tandai tugas done (simplifikasi)
+            if (target === 'tugas-tab') {
+                sessionStorage.setItem(baseKey + "_tugas_done", 'true');
+                generateMateriListTable(currentMapelData);
+            }
+        });
+
+        // --- FETCH LAPORAN (Fixed & Completed) ---
         window.fetchLaporanSiswa = async function(username) {
-            const absensiBodyEl = document.getElementById('laporan-absensi-body');
-            const nilaiBodyEl = document.getElementById('laporan-nilai-body');
-            const nilaiHeaderEl = document.getElementById('laporan-nilai-header');
+            const absensiBody = document.getElementById('laporan-absensi-body');
+            const nilaiBody = document.getElementById('laporan-nilai-body');
+            const nilaiHead = document.getElementById('laporan-nilai-header');
             
-            absensiBodyEl.innerHTML = `<tr><td colspan="5" class="text-center text-muted">Memuat data absensi...</td></tr>`;
-            nilaiBodyEl.innerHTML = `<tr><td colspan="10" class="text-center text-muted">Memuat data nilai...</td></tr>`;
-            nilaiHeaderEl.innerHTML = `<tr><th>Memuat Data...</th></tr>`;
-
+            absensiBody.innerHTML = `<tr><td colspan="5" class="text-center py-3"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>`;
+            
             try {
                 const response = await fetch(API_ENDPOINT + '?func=doPostLaporan', { 
-                    method: 'POST', 
-                    contentType: 'application/json', 
-                    body: JSON.stringify({ username: username }) 
+                    method: 'POST', body: JSON.stringify({ username: username }) 
                 });
-                
                 const result = await response.json();
 
                 if (result.success) {
-                    // 1. Render Absensi
-                    if (result.absensi && result.absensi.length > 0) {
-                        absensiBodyEl.innerHTML = result.absensi.map(record => `
+                    // Absensi
+                    if (result.absensi && result.absensi.length) {
+                        absensiBody.innerHTML = result.absensi.map(r => `
                             <tr>
-                                <td>${record.tanggal}</td>
-                                <td>${record.kelas}</td>
-                                <td>${record.masuk}</td>
-                                <td>${record.keluar || '<span class="text-danger">Belum Logout</span>'}</td>
-                                <td>${record.durasi || '-'}</td>
-                            </tr>
-                        `).join('');
+                                <td><span class="badge bg-light text-dark border">${r.tanggal}</span></td>
+                                <td>${r.kelas}</td>
+                                <td class="text-success">${r.masuk}</td>
+                                <td class="text-danger">${r.keluar || '-'}</td>
+                                <td>${r.durasi || '-'}</td>
+                            </tr>`).join('');
                     } else {
-                        absensiBodyEl.innerHTML = `<tr><td colspan="5" class="text-center text-muted">Tidak ada data absensi yang tercatat.</td></tr>`;
+                        absensiBody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">Belum ada data absensi.</td></tr>`;
                     }
-
-                    // 2. Render Nilai
-                    if (result.nilai && result.nilai.length > 0) {
-                        nilaiHeaderEl.innerHTML = `<tr><th>No.</th>` + result.nilaiHeaders.map(header => `<th>${header}</th>`).join('') + `</tr>`;
-                        
-                        nilaiBodyEl.innerHTML = result.nilai.map((record, index) => {
-                            const rowData = result.nilaiHeaders.map(header => `<td>${record[header] || '-'}</td>`).join('');
-                            return `<tr><td>${index + 1}</td>${rowData}</tr>`;
+                    // Nilai
+                    if (result.nilai && result.nilai.length) {
+                        nilaiHead.innerHTML = `<tr><th>No</th>` + result.nilaiHeaders.map(h => `<th>${h}</th>`).join('') + `</tr>`;
+                        nilaiBody.innerHTML = result.nilai.map((r, i) => {
+                            let rows = result.nilaiHeaders.map(h => `<td>${r[h] || '-'}</td>`).join('');
+                            return `<tr><td>${i+1}</td>${rows}</tr>`;
                         }).join('');
-
                     } else {
-                        nilaiHeaderEl.innerHTML = `<tr><th>Data Nilai</th></tr>`;
-                        nilaiBodyEl.innerHTML = `<tr><td colspan="10" class="text-center text-muted">Belum ada data nilai tercatat.</td></tr>`;
+                        nilaiBody.innerHTML = `<tr><td colspan="10" class="text-center text-muted">Belum ada nilai.</td></tr>`;
                     }
-                    
                 } else {
-                    absensiBodyEl.innerHTML = `<tr><td colspan="5" class="text-center alert alert-warning">${result.message}</td></tr>`;
-                    nilaiBodyEl.innerHTML = `<tr><td colspan="10" class="text-center text-muted">Gagal memuat data nilai.</td></tr>`;
+                     absensiBody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">${result.message}</td></tr>`;
                 }
-
-            } catch (error) {
-                console.error('Error fetching laporan:', error);
-                absensiBodyEl.innerHTML = `<tr><td colspan="5" class="text-center alert alert-danger">Terjadi kesalahan koneksi.</td></tr>`;
-                nilaiBodyEl.innerHTML = `<tr><td colspan="10" class="text-center alert alert-danger">Terjadi kesalahan koneksi.</td></tr>`;
+            } catch (e) {
+                console.error(e);
+                absensiBody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">Gagal memuat data.</td></tr>`;
             }
         }
 
-        // --- INISIALISASI EVENT LISTENER LOGIN ---
+        // --- LOGIN & LOGOUT HANDLER ---
         loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             const username = document.getElementById('username').value;
@@ -683,26 +585,26 @@
 
             try {
                 const response = await fetch(API_ENDPOINT + '?func=doLogin', {
-                    method: 'POST',
-                    contentType: 'application/json',
-                    body: JSON.stringify({ username, password })
+                    method: 'POST', body: JSON.stringify({ username, password })
                 });
-                
                 const result = await response.json();
 
                 if (result.success) {
-                    const rowIndex = await recordAbsensiMasuk(username, result.data.fullKelas);
-                    showDashboard(result.data.username, result.data.fullKelas, result.data.paket, result.data.kelas, result.data.nama, result.data.noInduk, rowIndex);
+                    // Catat Absen Masuk
+                    const absenRes = await fetch(API_ENDPOINT + '?func=doPostAbsensiMasuk', {
+                        method: 'POST', body: JSON.stringify({ username, fullKelas: result.data.fullKelas })
+                    });
+                    const absenJson = await absenRes.json();
+                    
+                    showDashboard(result.data.username, result.data.fullKelas, result.data.paket, result.data.kelas, result.data.nama, result.data.noInduk, absenJson.rowIndex);
                 } else {
                     loginAlert.textContent = result.message;
-                    loginAlert.className = 'alert alert-danger mt-3';
+                    loginAlert.className = 'alert alert-danger mt-3 py-2';
                     loginAlert.style.display = 'block';
                 }
-
             } catch (error) {
-                console.error(error);
-                loginAlert.textContent = 'Terjadi kesalahan koneksi server.';
-                loginAlert.className = 'alert alert-danger mt-3';
+                loginAlert.textContent = 'Koneksi Bermasalah.';
+                loginAlert.className = 'alert alert-danger mt-3 py-2';
                 loginAlert.style.display = 'block';
             } finally {
                 loginSpinner.style.display = 'none';
@@ -710,14 +612,20 @@
             }
         });
 
-        logoutBtn.addEventListener('click', function() {
-            const rowIndex = sessionStorage.getItem('absensiRowIndex');
-            recordAbsensiKeluar(rowIndex); 
-
-            sessionStorage.clear();
-            location.reload();
+        document.getElementById('logout-btn').addEventListener('click', async function() {
+            if (confirm('Apakah Anda yakin ingin keluar?')) {
+                const rid = sessionStorage.getItem('absensiRowIndex');
+                const dur = ((Date.now() - loginTime)/60000).toFixed(0);
+                
+                // Kirim Absen Keluar (Fire & Forget)
+                fetch(API_ENDPOINT + '?func=doPostAbsensiKeluar', {
+                    method: 'POST', body: JSON.stringify({ rowIndex: rid, durationMinutes: dur })
+                });
+                
+                sessionStorage.clear();
+                location.reload();
+            }
         });
-
     </script>
 </body>
 </html>
